@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxyPay Brand Book</title>
+<meta name="description" content="Nome, voz, paleta, tipografia, wordmark e aplicação no produto da FoxyPay.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="FoxyPay Brand Book">
+<meta property="og:description" content="Nome, voz, paleta, tipografia, wordmark e aplicação no produto da FoxyPay.">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700;800&family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F6F4F1;
+  --surface:#FFFFFF;
+  --surface-2:#EEEAE4;
+  --ink:#1E1A17;
+  --ink-2:#4A423C;
+  --muted:#857C74;
+  --line:#DDD7D0;
+  --ruiva:#E9541F;
+  --ruiva-ink:#B93F13;
+  --ruiva-soft:#FBE3D8;
+  --mel:#F2B33D;
+  --mel-soft:#FBEFD2;
+  --musgo:#2F6B4F;
+  --musgo-soft:#D9EBE1;
+  --ok:#2F6B4F;
+  --warn:#C98A12;
+  --crit:#B5432F;
+  --shadow:0 1px 2px rgba(30,26,23,.06),0 8px 24px rgba(30,26,23,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14110F; --surface:#1E1A17; --surface-2:#2A2420;
+    --ink:#F3EEE8; --ink-2:#CFC6BD; --muted:#948A80; --line:#3A332D;
+    --ruiva:#FF7A45; --ruiva-ink:#FFA07A; --ruiva-soft:#3D2418;
+    --mel:#F5C451; --mel-soft:#3A2D12;
+    --musgo:#5FB98F; --musgo-soft:#183426;
+    --ok:#5FB98F; --warn:#F5C451; --crit:#E2735F;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14110F; --surface:#1E1A17; --surface-2:#2A2420;
+  --ink:#F3EEE8; --ink-2:#CFC6BD; --muted:#948A80; --line:#3A332D;
+  --ruiva:#FF7A45; --ruiva-ink:#FFA07A; --ruiva-soft:#3D2418;
+  --mel:#F5C451; --mel-soft:#3A2D12;
+  --musgo:#5FB98F; --musgo-soft:#183426;
+  --ok:#5FB98F; --warn:#F5C451; --crit:#E2735F;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
+h1,h2,h3,h4{font-family:"Gabarito","Figtree",system-ui,sans-serif;text-wrap:balance;margin:0;line-height:1.08;letter-spacing:-.015em}
+h1{font-size:clamp(2.3rem,5.2vw,3.8rem);font-weight:800}
+h2{font-size:clamp(1.55rem,3vw,2.1rem);font-weight:700;margin-bottom:.35em}
+h3{font-size:1.15rem;font-weight:700;margin-bottom:.4em}
+p{margin:0 0 1em;max-width:66ch}
+a{color:var(--ruiva-ink)}
+code,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1040px;margin:0 auto;padding:0 24px}
+.eyebrow{font-family:"Gabarito",sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--muted);font-weight:700}
+.lead{font-size:1.15rem;color:var(--ink-2);max-width:60ch}
+
+/* header */
+header.top{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+header.top .wrap{position:relative;padding-top:52px;padding-bottom:56px;display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.meta{display:flex;gap:22px;flex-wrap:wrap;color:var(--muted);font-size:.85rem;margin-top:18px}
+.meta span b{color:var(--ink-2);font-weight:600}
+.wordmark{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.wm{font-family:"Gabarito",sans-serif;font-weight:800;font-size:2.3rem;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:baseline;white-space:nowrap;color:var(--wm-ink,var(--ink));padding-bottom:.5em}
+.wm .yg{height:.70em;width:.60em;overflow:visible;margin:0 -.02em 0 -.01em;flex:none}
+.wm .yg path{fill:none;stroke:var(--wm-accent,var(--ruiva));stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.wm .yg circle{fill:var(--wm-accent,var(--ruiva))}
+.ysym{overflow:visible}
+.ysym path{fill:none;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.ysym circle{fill:currentColor}
+.brandline{font-family:"Gabarito",sans-serif;font-weight:800;font-size:clamp(1.6rem,3.6vw,2.5rem);line-height:1.1;letter-spacing:-.02em;max-width:15ch}
+.heroart{display:flex;justify-content:center;align-items:center}
+.heroart svg{width:min(300px,80%);height:auto;color:var(--ruiva)}
+
+/* sections */
+section{padding:56px 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.stack{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.78rem;font-weight:700;letter-spacing:.02em}
+.pill.ruiva{background:var(--ruiva-soft);color:var(--ruiva-ink)}
+.pill.mel{background:var(--mel-soft);color:var(--warn)}
+.pill.ghost{border:1px solid var(--line);color:var(--muted)}
+
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:"Gabarito",sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:.72rem;color:var(--muted);font-weight:700}
+.tscroll{overflow-x:auto}
+
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.95rem}
+.dl dt{color:var(--muted)}
+.dl dd{margin:0}
+.rej{color:var(--muted);font-size:.9rem}
+
+.pillar{border-top:3px solid var(--ruiva);padding-top:14px}
+.pillar h3{font-size:1.05rem}
+.pillar p{font-size:.95rem;color:var(--ink-2);margin:0}
+
+.say{color:var(--musgo);font-weight:700}
+.avoid{color:var(--crit);text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:var(--crit)}
+.states{display:grid;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.state{display:grid;grid-template-columns:150px 180px 1fr;gap:16px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:.93rem;align-items:baseline}
+.state:last-child{border-bottom:0}
+.state code{color:var(--muted);font-size:.8rem}
+.state .lbl{font-weight:700}
+.state .msg{color:var(--ink-2)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px;vertical-align:middle;background:var(--muted)}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.crit{background:var(--crit)}.dot.ruiva{background:var(--ruiva)}
+
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.sw{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+.sw .chip{height:84px}
+.sw .info{padding:10px 12px;font-size:.82rem}
+.sw .info b{display:block;font-family:"Gabarito",sans-serif;font-weight:700}
+.sw .info code{color:var(--muted);font-size:.78rem}
+.sw .info small{display:block;color:var(--muted);margin-top:4px;line-height:1.35}
+
+.spec{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+.spec .role{font-size:.78rem;color:var(--muted);margin-bottom:8px;display:flex;justify-content:space-between}
+.spec .sample{overflow-wrap:anywhere}
+.spec .s-display{font-family:"Gabarito",sans-serif;font-weight:800;font-size:2.1rem;line-height:1.05;letter-spacing:-.025em}
+.spec .s-display2{font-family:"Gabarito",sans-serif;font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.12em;margin-top:12px;color:var(--muted)}
+.spec .s-body{font-family:"Figtree",sans-serif;font-size:1.02rem;line-height:1.55}
+.spec .s-mono{font-family:"IBM Plex Mono",monospace;font-size:.95rem;line-height:1.6}
+
+.logoboard{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.logoboard .board{border-radius:14px;border:1px solid var(--line);padding:36px 28px;display:flex;align-items:center;justify-content:center;min-height:180px;gap:24px}
+.board.light{background:#F6F4F1;color:#1E1A17}
+.board.dark{background:#1E1A17;color:#F3EEE8}
+.board.ruiva{background:#E9541F;color:#FFF7F2}
+.board.symbolonly{background:var(--surface)}
+.lg{display:inline-flex;align-items:center;gap:12px}
+.lg .wm{font-size:2.4rem}
+.board.ruiva{--wm-ink:#FFF7F2;--wm-accent:#FFF7F2}
+.board.light{--wm-ink:#1E1A17;--wm-accent:#E9541F}
+.board.dark{--wm-ink:#F3EEE8;--wm-accent:#FF7A45}
+.rules{font-size:.93rem;color:var(--ink-2)}
+.rules li{margin-bottom:6px}
+.expr{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.expr div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;font-size:.82rem;color:var(--ink-2)}
+.expr > div > svg{width:64px;height:64px;display:block;margin:0 auto 8px}
+
+.mock{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.mock .bar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+.mock .body{padding:20px 22px}
+.sniff{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--ink-2);margin-bottom:12px}
+.sniff svg{width:30px;height:24px;color:var(--ruiva)}
+.qrow{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:.95rem}
+.qrow:last-child{border-bottom:0}
+.qrow .k{color:var(--ink-2)}
+.qrow .v{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.qrow.total{border-top:1px solid var(--line);border-bottom:0;margin-top:6px;padding-top:12px;font-size:1.05rem}
+.qrow.total .k{font-weight:700;color:var(--ink)}
+.qrow.total .v{font-weight:800;font-size:1.3rem;font-family:"Gabarito",sans-serif;letter-spacing:-.02em}
+.lock{display:flex;align-items:center;gap:10px;margin:14px 0 4px;padding:10px 14px;border-radius:10px;background:var(--mel-soft);color:var(--warn);font-size:.9rem;font-weight:700}
+.lock .t{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;margin-left:auto;font-size:1.05rem}
+.bank{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--musgo-soft);font-size:.9rem;color:var(--ink-2)}
+.bank b{color:var(--musgo)}
+.bank small{display:block;color:var(--muted);margin-top:4px}
+.btn{display:inline-block;padding:13px 20px;border-radius:999px;background:var(--ruiva);color:#FFF7F2;font-weight:700;font-family:"Gabarito",sans-serif;text-decoration:none;margin-top:16px}
+.legal{font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.45}
+
+.receipt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px;font-size:.92rem}
+.receipt .head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:14px}
+.receipt .head .lg .wm{font-size:1.5rem;padding-bottom:.45em}
+.receipt .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+.receipt .kv div{display:grid;gap:2px}
+.receipt .kv span{color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;font-family:"Gabarito",sans-serif;font-weight:700}
+.receipt .kv b{font-weight:500}
+.receipt .hash{font-family:"IBM Plex Mono",monospace;font-size:.8rem;overflow-wrap:anywhere;color:var(--ink-2)}
+.stamp{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--musgo-soft);color:var(--musgo);font-weight:700;font-size:.85rem}
+
+.emails{display:grid;gap:8px;font-size:.93rem}
+.emails div{display:grid;grid-template-columns:150px 1fr;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.emails div code{color:var(--muted);font-size:.8rem}
+
+.callout{border-left:4px solid var(--ruiva);padding:12px 16px;background:var(--surface);border-radius:0 12px 12px 0;font-size:.95rem}
+.callout p:last-child{margin:0}
+.callout.warn{border-left-color:var(--mel)}
+.todo{display:grid;gap:10px}
+.todo div{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;font-size:.95rem}
+.todo .box{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:5px;margin-top:3px}
+
+footer{padding:36px 0;color:var(--muted);font-size:.85rem}
+
+@media (max-width:820px){
+  header.top .wrap{grid-template-columns:1fr;gap:24px}
+  .heroart{order:-1}
+  .grid2,.grid3,.logoboard{grid-template-columns:1fr}
+  .swatches,.expr{grid-template-columns:repeat(3,1fr)}
+  .state{grid-template-columns:1fr;gap:4px}
+  .receipt .kv{grid-template-columns:1fr}
+  .emails div{grid-template-columns:1fr}
+}
+@media (max-width:480px){ .swatches,.expr{grid-template-columns:repeat(2,1fr)} }
+:focus-visible{outline:2px solid var(--ruiva);outline-offset:2px}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <a class="wordmark" href="#nome" aria-label="FoxyPay">
+        <span class="wm" data-wm></span>
+      </a>
+      <div style="height:26px"></div>
+      <p class="eyebrow">Identidade de marca · v0.1</p>
+      <h1 style="margin-top:8px">Esperto é ver o custo antes de pagar.</h1>
+      <p class="lead" style="margin-top:14px">Nome, mascote, posicionamento, voz e sistema visual da fintech de pagamento internacional para empresas descrita no briefing do MVP. Pronto para virar landing, produto, comprovante e material comercial.</p>
+      <div class="meta">
+        <span><b>Data</b> 7 set 2026</span>
+        <span><b>Status</b> proposta para decisão</span>
+        <span><b>Pendências</b> INPI · domínio .com · jurídico</span>
+      </div>
+    </div>
+    <div class="heroart">
+<svg class="ysym" viewBox="0 0 160 125" aria-label="O y com cauda, símbolo da FoxyPay"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="nome">
+  <p class="eyebrow">1 · O nome e a cauda</p>
+  <h2>FoxyPay</h2>
+  <div class="grid2">
+    <div>
+      <p><b>Foxy</b> é a raposa. Em português "raposa" carrega esperteza, faro e agilidade, e é exatamente isso que o produto vende: farejar cada custo do banco e mostrar tudo na tela antes do Pix. O sufixo <b>Pay</b> diz o que a empresa faz e deixa a porta aberta para conta, cartão e crédito. A marca fica no mesmo grupo de PicPay, AbacatePay e RecargaPay: nome que sorri, produto que leva dinheiro a sério.</p>
+      <p>A raposa tem um risco conhecido: "raposa velha", "esperto demais". A marca resolve isso com uma regra simples, repetida em tudo: <b>Foxy é esperta do seu lado</b>. Ela nunca é esperta contra o cliente, e nunca faz piada com dinheiro, erro ou prazo. A esperteza aparece só onde ajuda: achar o custo escondido, travar a cotação, chegar antes.</p>
+      <dl class="dl" style="margin-top:18px">
+        <dt>Grafia</dt><dd><b>FoxyPay</b>, uma palavra, F e P maiúsculos. Nunca "Foxy Pay" com espaço, nunca "Foxypay". No wordmark, "Pay" em laranja.</dd>
+        <dt>Mascote</dt><dd><b>Foxy</b> existe como voz e nome, não como desenho. A única coisa de raposa que a marca desenha é a cauda, e ela mora no "y". Em texto, sem artigo de gênero ("Foxy farejou", não "a Foxy").</dd>
+        <dt>Razão social sugerida</dt><dd>FoxyPay Tecnologia Ltda. <span class="rej">(jurídico define; evitar "serviços de pagamento" para não sugerir que somos IP)</span></dd>
+        <dt>Domínios</dt><dd><code>foxypay.com.br</code> <span class="pill mel">livre em 7 set</span> · <code>foxypay.app</code> e <code>foxypay.com.br/app</code> como alternativas. <code>foxypay.com</code> e <code>foxypay.co</code> estão ocupados.</dd>
+        <dt>Handle</dt><dd><code>@foxypay</code>, fallback <code>@foxypay.br</code> ou <code>@foxypaybr</code></dd>
+      </dl>
+    </div>
+    <div class="stack">
+      <div class="callout warn">
+        <p class="eyebrow" style="margin-bottom:6px">Colisões conhecidas</p>
+        <p><b>FoxyPay.net</b> é um gateway ucraniano de cartão e cripto para lojas online. Mercado, país e público diferentes, mas ocupa o .com e aparece em busca. A defesa é registrar a marca no INPI cedo e construir presença em ".com.br" e nas redes.</p>
+        <p><b>Foxbit Infra</b> está na sua shortlist de parceiros PSAV. "FoxyPay" ao lado de "Foxbit" no comprovante pode parecer empresa do mesmo grupo. Se a Foxbit for a parceira, o jurídico precisa aprovar o co-branding; se não for, o ponto some.</p>
+        <p><b>FOXY</b> é também um token cripto listado. Sem sobreposição de marca, mas evite qualquer estética "coin" para não ser confundido.</p>
+      </div>
+      <div class="card">
+        <h3>Como Foxy se comporta</h3>
+        <ul class="rules" style="padding-left:18px;margin:0">
+          <li>Fala em <b>transições boas e neutras</b>: cotação pronta, Pix recebido, pagamento feito, página vazia.</li>
+          <li><b>Some em erro, análise e devolução.</b> Nesses momentos fala a empresa, em tom direto, sem "Foxy" no texto.</li>
+          <li>Não fala em primeira pessoa sobre dinheiro do cliente ("eu peguei seu Pix"). Foxy fareja, mostra, avisa. Quem executa é o parceiro regulado.</li>
+          <li>A cauda tem um único movimento permitido: abana uma vez quando o pagamento chega. Nada mais anima.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="posicionamento">
+  <p class="eyebrow">2 · Posicionamento</p>
+  <h2>O custo que está na tela é o custo que você paga.</h2>
+  <p class="lead">FoxyPay é a forma de o importador brasileiro pagar o fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada antes do Pix e comprovante com contrato de câmbio no fim. A tecnologia e a experiência são nossas. A custódia e o câmbio são de um parceiro autorizado pelo Banco Central, e isso fica escrito em toda tela que envolve dinheiro.</p>
+  <div class="grid2" style="margin-top:28px">
+    <div>
+      <h3>Para quem</h3>
+      <p>Sellers de Shopee, Mercado Livre e Amazon, operações de dropshipping e pequenas indústrias e distribuidores que compram insumo fora. Pessoa jurídica, ticket entre R$ 5 mil e R$ 150 mil, pagando de 2 a 20 vezes por mês. O segundo leitor é sempre o contador.</p>
+      <h3 style="margin-top:18px">Contra o quê</h3>
+      <p>O banco, que cobra 2 a 4% de spread mais tarifa e leva dias. E o "cara do câmbio" informal, que é rápido mas não dá contrato de câmbio nem comprovante que o contador aceite. FoxyPay precisa ganhar dos dois no mesmo pedido: preço do informal, papel do banco.</p>
+      <h3 style="margin-top:18px">Frase de marca</h3>
+      <p class="brandline" style="font-size:1.6rem">Esperto é ver o custo antes de pagar.</p>
+      <p class="rej">Alternativa curta para redes e CTA: "Pague lá fora do jeito esperto."</p>
+    </div>
+    <div class="stack">
+      <div class="pillar"><h3>Custo aberto</h3><p>Câmbio base, spread do parceiro, nossa taxa, IOF e tarifa de rede, linha por linha, antes de confirmar. Nunca "a partir de".</p></div>
+      <div class="pillar"><h3>Cotação travada</h3><p>60 segundos com contador na tela. O valor do Pix é o valor final. Se o Pix não chega, nada é cobrado.</p></div>
+      <div class="pillar"><h3>Chega em minutos, não em dias</h3><p>Trilho em stablecoin via parceiro autorizado. Falamos do tempo real medido (p50/p95), nunca "instantâneo".</p></div>
+      <div class="pillar"><h3>Papel que o contador aceita</h3><p>Comprovante em PDF, contrato de câmbio do parceiro, invoice vinculada e extrato mensal exportável.</p></div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:28px">
+    <p><b>O que FoxyPay não é.</b> Não é exchange, não é carteira cripto, não é banco e não é casa de câmbio. Não usamos "cripto", "blockchain" ou "Web3" como argumento de venda. Stablecoin aparece uma vez, no lugar certo: na linha de custo e no comprovante, com o nome do parceiro que executa. E Foxy nunca vira "raposa do mercado": esperteza é achar custo, não bater o dólar.</p>
+  </div>
+</section>
+
+<section id="voz">
+  <p class="eyebrow">3 · Voz e vocabulário</p>
+  <h2>Leve na conversa, seca no dinheiro.</h2>
+  <div class="grid2" style="margin-top:20px">
+    <div>
+      <h3>Cinco regras de escrita</h3>
+      <ol class="rules" style="padding-left:20px">
+        <li><b>O número vem antes do adjetivo.</b> "R$ 1.255 a menos que no banco", nunca "muito mais barato".</li>
+        <li><b>Nunca esconda o que custa.</b> Toda menção a preço mostra o custo total em reais. "Taxa zero" é proibido, porque é mentira em qualquer câmbio.</li>
+        <li><b>Diga quem faz o quê.</b> "Recebemos seu Pix na conta da [IP parceira]" e "a [PSAV parceira] enviou ao fornecedor". Nós orquestramos; eles executam.</li>
+        <li><b>Humor só em momento bom.</b> Foxy pode brincar quando o pagamento chegou ou a cotação ficou boa. Em erro, análise e devolução, a mascote sai e o texto diz o que aconteceu, onde está o dinheiro e o que fazer.</li>
+        <li><b>Português de importador.</b> Proforma, invoice, fornecedor, natureza da operação. As palavras que o cliente já usa com o despachante.</li>
+      </ol>
+    </div>
+    <div>
+      <h3>Dizemos · Evitamos</h3>
+      <dl class="dl">
+        <dt><span class="say">pagamento internacional</span></dt><dd><span class="avoid">remessa cripto</span> · <span class="avoid">envio de USDT</span></dd>
+        <dt><span class="say">fornecedor</span></dt><dd><span class="avoid">beneficiário</span> (só em contrato e comprovante)</dd>
+        <dt><span class="say">custo total</span></dt><dd><span class="avoid">taxa baixa</span> · <span class="avoid">spread zero</span></dd>
+        <dt><span class="say">cotação travada por 60 s</span></dt><dd><span class="avoid">cotação garantida</span> (jurídico)</dd>
+        <dt><span class="say">parceiro autorizado pelo BC</span></dt><dd><span class="avoid">nosso banco</span> · <span class="avoid">nossa custódia</span></dd>
+        <dt><span class="say">esperto</span></dt><dd><span class="avoid">malandro</span> · <span class="avoid">jeitinho</span> · <span class="avoid">raposa velha</span></dd>
+        <dt><span class="say">Foxy farejou</span></dt><dd><span class="avoid">a raposa pegou</span> · <span class="avoid">Foxy guardou seu dinheiro</span></dd>
+        <dt><span class="say">em minutos</span> (quando medido)</dt><dd><span class="avoid">instantâneo</span> · <span class="avoid">na hora</span></dd>
+        <dt><span class="say">stablecoin (USDT)</span> na linha de custo</dt><dd><span class="avoid">cripto</span> · <span class="avoid">blockchain</span> no marketing</dd>
+      </dl>
+    </div>
+  </div>
+
+  <h3 style="margin-top:36px">Máquina de estados, em português de cliente</h3>
+  <p style="color:var(--ink-2)">Cada estado técnico do <code>PaymentOrder</code> tem um rótulo e uma frase fixa. A coluna da direita marca onde Foxy fala e onde a marca fica calada. Estes textos são configuração versionada, não código.</p>
+  <div class="states">
+    <div class="state"><code>quoted</code><span class="lbl"><i class="dot warn"></i>Cotação travada</span><span class="msg">Foxy farejou: R$ 1.255,68 a menos que no banco. Você tem 60 segundos para pagar o Pix.</span></div>
+    <div class="state"><code>awaiting_funds</code><span class="lbl"><i class="dot"></i>Aguardando seu Pix</span><span class="msg">Pague R$ 54.926,28 exatos na chave abaixo. Valor diferente entra em revisão manual.</span></div>
+    <div class="state"><code>funds_received</code><span class="lbl"><i class="dot ruiva"></i>Pix recebido</span><span class="msg">Recebemos seu Pix na conta da [IP parceira]. Iniciando o envio ao fornecedor.</span></div>
+    <div class="state"><code>executing</code><span class="lbl"><i class="dot ruiva"></i>Enviando ao fornecedor</span><span class="msg">A [PSAV parceira] está convertendo e enviando. Tempo típico: 4 a 20 minutos.</span></div>
+    <div class="state"><code>sent</code><span class="lbl"><i class="dot ruiva"></i>Enviado</span><span class="msg">Saiu para o fornecedor. Hash da transação disponível na timeline.</span></div>
+    <div class="state"><code>settled</code><span class="lbl"><i class="dot ok"></i>Pago</span><span class="msg">Chegou. Comprovante e contrato de câmbio disponíveis. A cauda do y abana uma vez.</span></div>
+    <div class="state"><code>failed</code><span class="lbl"><i class="dot crit"></i>Não concluído</span><span class="msg">O envio não foi executado. Seu dinheiro está sendo devolvido ao Pix de origem. Nenhuma taxa foi cobrada. Sem mascote.</span></div>
+    <div class="state"><code>refunded</code><span class="lbl"><i class="dot"></i>Devolvido</span><span class="msg">R$ 54.926,28 devolvidos à conta de origem em 7 set, 14:32. Sem mascote.</span></div>
+    <div class="state"><code>expired</code><span class="lbl"><i class="dot"></i>Cotação expirou</span><span class="msg">O Pix não chegou dentro dos 60 segundos. Nada foi cobrado. Peça uma nova cotação.</span></div>
+    <div class="state"><code>under_review</code><span class="lbl"><i class="dot warn"></i>Em análise</span><span class="msg">Nossa equipe está verificando este pagamento. Prazo: até 1 dia útil. Você recebe e-mail quando mudar. Sem mascote.</span></div>
+  </div>
+</section>
+
+<section id="visual">
+  <p class="eyebrow">4 · Sistema visual</p>
+  <h2>Uma cauda, muito espaço, e o número sempre maior que a piada.</h2>
+  <p class="lead">O laranja é inevitável para uma raposa, então ele precisa ser específico: mais terroso que o do Inter, mais quente que o do Itaú. Ao redor dele, superfícies quietas, um verde de mata para o que deu certo e um mel para o que está travado. Nada de gradiente, nada de moeda girando, nada de raposa desenhada. A raposa inteira cabe numa letra.</p>
+
+  <h3 style="margin-top:30px">Paleta</h3>
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:#E9541F"></div><div class="info"><b>Ruiva</b><code>#E9541F</code><small>Cor de marca. O "y" e a cauda, botão primário, links.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#1E1A17"></div><div class="info"><b>Toca</b><code>#1E1A17</code><small>Texto principal e fundo escuro. Preto quente, nunca preto puro.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#F6F4F1;border-bottom:1px solid var(--line)"></div><div class="info"><b>Areia</b><code>#F6F4F1</code><small>Fundo claro. Quente sem ser creme.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#2F6B4F"></div><div class="info"><b>Mata</b><code>#2F6B4F</code><small>Pago, economia frente ao banco, sucesso. Nunca como cor de marca.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#F2B33D"></div><div class="info"><b>Mel</b><code>#F2B33D</code><small>Só para o que está travado: timer da cotação, atenção.</small></div></div>
+    <div class="sw"><div class="chip" style="background:#857C74"></div><div class="info"><b>Pedra</b><code>#857C74</code><small>Texto secundário, legendas, metadados.</small></div></div>
+  </div>
+  <div class="grid2" style="margin-top:20px">
+    <div>
+      <p style="font-size:.93rem;color:var(--ink-2)"><b>Semântica separada da marca.</b> Estados usam <span style="color:var(--ok);font-weight:700">Mata</span> (pago), <span style="color:var(--warn);font-weight:700">Mel</span> (travado, atenção) e <span style="color:var(--crit);font-weight:700">vermelho #B5432F</span> (não concluído). Ruiva nunca significa "sucesso"; ela é a marca.</p>
+    </div>
+    <div>
+      <p style="font-size:.93rem;color:var(--ink-2)"><b>Modo escuro</b> troca o fundo para <code>#14110F</code>, clareia Ruiva para <code>#FF7A45</code> e Mata para <code>#5FB98F</code>. Esta página já está nos dois modos; alterne o tema para conferir.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:36px">Tipografia</h3>
+  <div class="grid3">
+    <div class="spec">
+      <div class="role"><span>Display · Gabarito</span><span>700 / 800</span></div>
+      <div class="sample s-display">Cotação travada por 60 segundos.</div>
+      <div class="sample s-display2">Eyebrow · 700 · +12%</div>
+      <p style="font-size:.85rem;color:var(--muted);margin:12px 0 0">Geométrica e amigável, com peso de verdade. Dá o sorriso do wordmark sem virar fonte de brinquedo.</p>
+    </div>
+    <div class="spec">
+      <div class="role"><span>Texto · Figtree</span><span>400 / 500 / 600</span></div>
+      <div class="sample s-body">Recebemos seu Pix na conta da IP parceira. A PSAV parceira está convertendo e enviando ao fornecedor. Tempo típico: 4 a 20 minutos.</div>
+      <p style="font-size:.85rem;color:var(--muted);margin:12px 0 0">Aberta, boa em 14 px no painel e em PDF. Nunca Inter.</p>
+    </div>
+    <div class="spec">
+      <div class="role"><span>Dados · IBM Plex Mono</span><span>400 / 500 · tabular</span></div>
+      <div class="sample s-mono num">USD 10.000,00<br>BRL 54.926,28<br>1 USD = 5,42000000<br>txid E1234…9F0A</div>
+      <p style="font-size:.85rem;color:var(--muted);margin:12px 0 0">Todo valor, câmbio, hash e identificador. Câmbio sempre com 8 casas quando exibido por extenso.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:36px">Wordmark e símbolo</h3>
+  <div class="logoboard">
+    <div class="board light"><span class="lg"><span class="wm" data-wm></span></span></div>
+    <div class="board dark"><span class="lg"><span class="wm" data-wm></span></span></div>
+    <div class="board ruiva"><span class="lg"><span class="wm" data-wm></span></span></div>
+    <div class="board symbolonly"><svg class="ysym" viewBox="0 0 160 125" width="150" style="color:var(--ruiva)" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg></div>
+  </div>
+  <div class="grid2" style="margin-top:18px">
+    <div>
+      <p style="font-size:.95rem;color:var(--ink-2)"><b>Não existe símbolo separado do nome.</b> O "y" de Foxy desce, vira cauda e corre por baixo de "Pay". A ponta branca da cauda é um vão: um ponto solto no fim do traço. É a única coisa de raposa que a marca desenha, e é a única coisa em laranja no wordmark.</p>
+      <p style="font-size:.95rem;color:var(--ink-2)"><b>O wordmark</b> é "Fox" e "Pay" em Gabarito 800, tracking -3%, em Toca, com o "y" desenhado em Ruiva no mesmo peso de haste. Quando o nome não cabe (favicon, avatar, carimbo), fica só o "y" com a cauda. Em fundo laranja, tudo em pêssego claro.</p>
+    </div>
+    <div>
+      <ul class="rules" style="padding-left:18px;margin:0">
+        <li>Área de respiro mínima: a altura do "x" ao redor do conjunto, contando a cauda.</li>
+        <li>Duas cores no máximo: texto em Toca (ou Areia no escuro) e o "y" em Ruiva. Em fundo laranja, uma cor só.</li>
+        <li>O "y" nunca é substituído pela letra da fonte. Sem o desenho, escreve-se "FoxyPay" em texto corrido, sem destaque.</li>
+        <li>A cauda não muda de forma, não ganha pelo, não vira seta. O ponto no fim é fixo.</li>
+        <li>Nenhuma raposa desenhada em lugar nenhum: sem cabeça, sem orelha, sem ilustração. A cauda é a mascote inteira.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:28px">Escalas</h3>
+  <div class="expr">
+    <div><span style="display:flex;justify-content:center;align-items:center;height:64px;margin-bottom:8px"><svg class="ysym" viewBox="0 0 160 125" width="20" style="color:var(--ruiva)" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg></span><b>16 px</b><br>Favicon, aba do navegador.</div>
+    <div><span style="display:flex;justify-content:center;align-items:center;height:64px;margin-bottom:8px"><svg class="ysym" viewBox="0 0 160 125" width="40" style="color:var(--ruiva)" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg></span><b>32 px</b><br>Avatar, notificação, carimbo.</div>
+    <div><span style="display:flex;justify-content:center;align-items:center;height:64px;margin-bottom:8px"><span class="wm" style="font-size:1.1rem;padding-bottom:.4em" data-wm></span></span><b>Wordmark pequeno</b><br>Rodapé, e-mail, comprovante.</div>
+    <div><span style="display:flex;justify-content:center;align-items:center;height:64px;margin-bottom:8px"><span class="wm" style="font-size:1.1rem;padding-bottom:.4em;--wm-accent:var(--ink)" data-wm></span></span><b>Uma cor</b><br>Impressão em preto, fax do despachante.</div>
+  </div>
+</section>
+
+<section id="aplicacao">
+  <p class="eyebrow">5 · Aplicação no MVP</p>
+  <h2>A marca acontece na tela de cotação e no comprovante.</h2>
+  <p class="lead">São as duas superfícies onde a promessa é verificada pelo cliente. Tudo aqui é exemplo ilustrativo com parâmetros configuráveis (câmbio, spread, take rate, IOF e comparação bancária vêm de tabela).</p>
+
+  <div class="grid2" style="margin-top:28px;align-items:start">
+    <div class="mock" aria-label="Tela de cotação, exemplo">
+      <div class="bar"><span>Novo pagamento · Shenzhen Huaxin Electronics Co.</span><span class="pill ruiva">USDT · Tron</span></div>
+      <div class="body">
+        <div class="sniff"><svg class="ysym" viewBox="0 0 160 125" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg><span>Foxy farejou a cotação. Custo total aberto abaixo.</span></div>
+        <div class="qrow"><span class="k">Valor ao fornecedor</span><span class="v num">USD 10.000,00</span></div>
+        <div class="qrow"><span class="k">Câmbio base</span><span class="v num">5,42000000</span></div>
+        <div class="qrow"><span class="k">Spread do parceiro (0,35%)</span><span class="v num">R$ 189,70</span></div>
+        <div class="qrow"><span class="k">Taxa FoxyPay (0,60%)</span><span class="v num">R$ 325,20</span></div>
+        <div class="qrow"><span class="k">IOF (0,38%)</span><span class="v num">R$ 205,96</span></div>
+        <div class="qrow"><span class="k">Tarifa de rede</span><span class="v num">R$ 5,42</span></div>
+        <div class="qrow total"><span class="k">Você paga via Pix</span><span class="v num">R$ 54.926,28</span></div>
+        <div class="lock">Cotação travada <span class="t" id="timer">0:47</span></div>
+        <div class="bank">No banco, este pagamento custaria cerca de <b>R$ 56.181,96</b>. Você paga <b>R$ 1.255,68 a menos</b>.<small>Comparação ilustrativa: spread bancário médio de 3% mais tarifa de R$ 150. Não é uma cotação de banco.</small></div>
+        <a class="btn" href="#aplicacao">Gerar Pix de R$ 54.926,28</a>
+        <p class="legal">A conversão e o envio são executados por [PSAV parceira], autorizada pelo Banco Central do Brasil. O Pix é recebido na conta de [IP parceira]. A FoxyPay não custodia valores nem realiza câmbio.</p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="receipt" aria-label="Cabeçalho do comprovante, exemplo">
+        <div class="head">
+          <span class="lg"><span class="wm" data-wm></span></span>
+          <span class="stamp">Pago · 7 set 2026, 14:41</span>
+        </div>
+        <p class="eyebrow" style="margin-bottom:10px">Comprovante de pagamento internacional · Nº FXP-2026-004182</p>
+        <div class="kv">
+          <div><span>Pagador</span><b>Loja Norte Importados Ltda.</b><b class="mono" style="font-size:.85rem">CNPJ 12.345.678/0001-90</b></div>
+          <div><span>Fornecedor</span><b>Shenzhen Huaxin Electronics Co., Ltd.</b><b style="font-weight:400;color:var(--ink-2)">Shenzhen, China</b></div>
+          <div><span>Valor enviado</span><b class="mono num">USDT 10.000,00 · rede Tron</b></div>
+          <div><span>Valor pago via Pix</span><b class="mono num">R$ 54.926,28</b></div>
+          <div><span>Câmbio efetivo</span><b class="mono num">1 USD = 5,49262800 BRL</b></div>
+          <div><span>Invoice vinculada</span><b class="mono">PI-HX-20260901-77</b></div>
+          <div style="grid-column:1/-1"><span>Hash on-chain</span><b class="hash">7f3a9c1e4b2d8a6f0e5c3b9d1a7f2e8c4b6d0a3f9e1c7b5d2a8f4e6c0b3d9a1f</b></div>
+        </div>
+        <p class="legal">Execução por [PSAV parceira] (autorização BCB nº ____). Pix recebido por [IP parceira]. Contrato de câmbio nº ____ anexo. Este comprovante não constitui parecer fiscal.</p>
+      </div>
+      <div class="card">
+        <h3>Assuntos de e-mail</h3>
+        <div class="emails">
+          <div><code>funds_received</code><span>Pix recebido. Enviando USD 10.000,00 à Huaxin.</span></div>
+          <div><code>sent</code><span>Enviado à Huaxin. Chega em minutos.</span></div>
+          <div><code>settled</code><span>Pago: USD 10.000,00 à Huaxin. Comprovante em anexo.</span></div>
+          <div><code>failed</code><span>Pagamento não concluído. Devolução de R$ 54.926,28 iniciada.</span></div>
+          <div><code>under_review</code><span>Seu pagamento à Huaxin está em análise.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:36px">Nomes dentro do produto</h3>
+  <div class="tscroll">
+  <table>
+    <tr><th>Superfície</th><th>Nome</th><th>Por quê</th></tr>
+    <tr><td>App do cliente</td><td><b>Painel</b></td><td>Sem inventar palavra. O cliente já chama assim.</td></tr>
+    <tr><td>Backoffice</td><td><b>Toca</b></td><td>A toca da raposa: onde a equipe vê tudo. Nome interno, nunca aparece para o cliente.</td></tr>
+    <tr><td>Simulador público</td><td><b>Simulador</b></td><td>"Quanto custa pagar USD 10 mil hoje?" Sem nome fantasia.</td></tr>
+    <tr><td>Documentos</td><td><b>Documentos</b></td><td>Comprovante, contrato de câmbio, invoice, extrato. Nada de "Cofre".</td></tr>
+    <tr><td>Acesso do contador</td><td><b>Acesso contábil</b></td><td>Papel <code>viewer</code> com nome que o contador reconhece.</td></tr>
+    <tr><td>Papéis</td><td><b>Dono · Financeiro · Leitura</b></td><td>Tradução direta de <code>owner</code>, <code>finance</code>, <code>viewer</code>.</td></tr>
+    <tr><td>Estado de carregamento</td><td><b>"Farejando a cotação…"</b></td><td>Único lugar onde a mascote vira verbo na interface. A cauda não anima aqui.</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="compliance">
+  <p class="eyebrow">6 · Compliance na marca</p>
+  <h2>Quem faz o quê, escrito em toda tela com dinheiro.</h2>
+  <div class="grid2">
+    <div>
+      <p>O briefing exige que o papel do parceiro regulado fique explícito em tela e em documento. Na marca isso vira um bloco fixo de texto, versionado, que aparece em quatro lugares: rodapé da landing, tela de cotação antes do botão de Pix, comprovante e termos. Nunca escondido em tooltip. E nunca com o "y" solto ao lado, só com o wordmark completo ou sem marca.</p>
+      <div class="callout">
+        <p class="eyebrow" style="margin-bottom:6px">Texto-base · v0.1 · sujeito a validação jurídica</p>
+        <p>A FoxyPay é uma empresa de tecnologia. A custódia de ativos virtuais, a conversão e o envio ao exterior são realizados por <b>[PSAV parceira]</b>, prestadora de serviços de ativos virtuais autorizada pelo Banco Central do Brasil nos termos das Resoluções BCB 519, 520 e 521. Os pagamentos via Pix são recebidos na conta de <b>[IP parceira]</b>, instituição de pagamento autorizada. A FoxyPay não custodia valores, não realiza operações de câmbio e não movimenta recursos fora das contas dos parceiros.</p>
+      </div>
+    </div>
+    <div>
+      <h3>Disclaimers que a marca carrega</h3>
+      <ul class="rules" style="padding-left:18px">
+        <li><b>Comparação bancária:</b> "Comparação ilustrativa com base em spread médio de X% e tarifa de R$ Y. Não é uma cotação de banco." Parâmetros configuráveis, texto versionado.</li>
+        <li><b>Tempo:</b> só prometer o que o p95 medido sustenta. "Em minutos" vira "em até N minutos" quando houver dado.</li>
+        <li><b>Fiscal:</b> "Os relatórios reúnem dados para suas obrigações fiscais. A FoxyPay não presta consultoria fiscal."</li>
+        <li><b>Stablecoin:</b> nome do ativo e da rede aparecem no comprovante e na cotação, nunca em headline de marketing.</li>
+        <li><b>Marca do parceiro:</b> nome e número de autorização no rodapé do comprovante e da landing, com o logotipo do parceiro se o contrato permitir. Se o parceiro for a Foxbit, o jurídico precisa aprovar a convivência dos dois nomes.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="proximos">
+  <p class="eyebrow">7 · Antes de usar o nome em público</p>
+  <h2>Quatro verificações.</h2>
+  <div class="todo">
+    <div><span class="box"></span><span><b>Domínio hoje.</b> Registrar <code>foxypay.com.br</code> no Registro.br agora, antes de qualquer divulgação. Tentar <code>foxypay.app</code> e reservar os handles.</span></div>
+    <div><span class="box"></span><span><b>INPI.</b> Busca de anterioridade para "FoxyPay" e "Foxy" nas classes 36 (serviços financeiros) e 42 (software). Depositar marca mista (o wordmark com o "y" desenhado) e nominativa. A FoxyPay.net ucraniana não tem marca no Brasil até onde a busca web mostra; confirmar no INPI.</span></div>
+    <div><span class="box"></span><span><b>Jurídico.</b> Validar razão social, texto-base de compliance e a frase "cotação travada" (versus "garantida"). Confirmar como o nome FoxyPay aparece nos documentos emitidos pelo parceiro.</span></div>
+    <div><span class="box"></span><span><b>Parceiro.</b> Levar este documento à conversa comercial com Avenia e Transfero primeiro. Se a Foxbit Infra entrar na conversa, tratar a convivência "Foxy" e "Foxbit" antes de assinar.</span></div>
+  </div>
+</section>
+
+</main>
+<footer class="wrap">FoxyPay · Identidade de marca v0.1 · 7 set 2026 · Documento de proposta; nomes de parceiros, números de autorização e valores são placeholders ou exemplos ilustrativos.</footer>
+
+<script>
+(function(){
+  var WM='<span>Fox</span><svg class="yg" viewBox="0 0 62 70" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg><span>Pay</span>';
+  var els=document.querySelectorAll('[data-wm]'); for(var i=0;i<els.length;i++){ els[i].innerHTML=WM; els[i].setAttribute('aria-label','FoxyPay'); }
+  var t=document.getElementById('timer'), s=47;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(t&&!reduce){setInterval(function(){s=s>0?s-1:60;t.textContent='0:'+(s<10?'0':'')+s;},1000);}
+})();
+</script>
+
+</body>
+</html>

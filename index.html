@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxyPay</title>
+<meta name="description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela e comprovante com contrato de câmbio.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="FoxyPay">
+<meta property="og:description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela e comprovante com contrato de câmbio.">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700;800&family=Figtree:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F6F4F1; --surface:#FFFFFF; --surface-2:#EEEAE4;
+  --ink:#1E1A17; --ink-2:#4A423C; --muted:#857C74; --line:#DDD7D0;
+  --ruiva:#E9541F; --ruiva-ink:#B93F13; --ruiva-soft:#FBE3D8;
+  --mel:#F2B33D; --mel-soft:#FBEFD2;
+  --musgo:#2F6B4F; --musgo-soft:#D9EBE1;
+  --crit:#B5432F;
+  --shadow:0 1px 2px rgba(30,26,23,.06),0 12px 32px rgba(30,26,23,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14110F; --surface:#1E1A17; --surface-2:#2A2420;
+    --ink:#F3EEE8; --ink-2:#CFC6BD; --muted:#948A80; --line:#3A332D;
+    --ruiva:#FF7A45; --ruiva-ink:#FFA07A; --ruiva-soft:#3D2418;
+    --mel:#F5C451; --mel-soft:#3A2D12;
+    --musgo:#5FB98F; --musgo-soft:#183426;
+    --crit:#E2735F;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14110F; --surface:#1E1A17; --surface-2:#2A2420;
+  --ink:#F3EEE8; --ink-2:#CFC6BD; --muted:#948A80; --line:#3A332D;
+  --ruiva:#FF7A45; --ruiva-ink:#FFA07A; --ruiva-soft:#3D2418;
+  --mel:#F5C451; --mel-soft:#3A2D12;
+  --musgo:#5FB98F; --musgo-soft:#183426;
+  --crit:#E2735F;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
+h1,h2,h3{font-family:"Gabarito","Figtree",system-ui,sans-serif;text-wrap:balance;margin:0;line-height:1.08;letter-spacing:-.02em}
+h1{font-size:clamp(2.4rem,5.4vw,4rem);font-weight:800}
+h2{font-size:clamp(1.7rem,3.4vw,2.4rem);font-weight:800}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0 0 1em}
+a{color:var(--ruiva-ink)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.num{font-variant-numeric:tabular-nums}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+.eyebrow{font-family:"Gabarito",sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;color:var(--ruiva-ink);font-weight:700}
+.lead{font-size:1.15rem;color:var(--ink-2);max-width:56ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:999px;background:var(--ruiva);color:#FFF7F2;font-weight:700;font-family:"Gabarito",sans-serif;font-size:1rem;text-decoration:none;border:0;cursor:pointer}
+.btn:hover{background:var(--ruiva-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--ink)}
+.btn.small{padding:9px 16px;font-size:.92rem}
+
+/* wordmark */
+.wm{font-family:"Gabarito",sans-serif;font-weight:800;font-size:1.65rem;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:baseline;white-space:nowrap;color:var(--wm-ink,var(--ink));padding-bottom:.45em;text-decoration:none}
+.wm .yg{height:.70em;width:.60em;overflow:visible;margin:0 -.02em 0 -.01em;flex:none}
+.wm .yg path{fill:none;stroke:var(--wm-accent,var(--ruiva));stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.wm .yg circle{fill:var(--wm-accent,var(--ruiva))}
+.ysym{overflow:visible}
+.ysym path{fill:none;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round}
+.ysym circle{fill:currentColor}
+
+/* nav */
+nav.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:20px}
+nav.top .wm{padding-bottom:.3em;transform:translateY(.12em)}
+nav.top ul{list-style:none;margin:0;padding:0;display:flex;gap:26px}
+nav.top ul a{color:var(--ink-2);text-decoration:none;font-weight:500;font-size:.95rem}
+nav.top ul a:hover{color:var(--ink)}
+nav.top .acts{display:flex;gap:10px;align-items:center}
+
+/* hero */
+.hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;padding-top:64px;padding-bottom:64px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.hero .note{font-size:.85rem;color:var(--muted);margin-top:14px}
+.trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface)}
+.trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:18px 24px}
+.trust div{font-size:.88rem;color:var(--ink-2);display:flex;gap:10px;align-items:flex-start}
+.trust i{width:8px;height:8px;border-radius:50%;background:var(--musgo);flex:none;margin-top:8px}
+
+/* simulator */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.sim .bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+.sim .bar b{color:var(--ink);font-family:"Gabarito",sans-serif;font-weight:700}
+.sim .body{padding:20px 22px}
+.field{display:grid;gap:6px;margin-bottom:12px}
+.field label{font-size:.8rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-family:"Gabarito",sans-serif}
+.inrow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.inp{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--bg)}
+.inp:focus-within{border-color:var(--ruiva)}
+.inp span{color:var(--muted);font-weight:600;font-family:"IBM Plex Mono",monospace;font-size:.95rem}
+.inp input,.inp select{border:0;background:transparent;color:var(--ink);font:inherit;font-family:"IBM Plex Mono",monospace;font-size:1.15rem;width:100%;outline:none;font-variant-numeric:tabular-nums}
+.inp select{font-family:"Figtree",sans-serif;font-size:1rem}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:-4px 0 14px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink-2);border-radius:999px;padding:5px 12px;font:inherit;font-size:.85rem;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.qrow{display:flex;justify-content:space-between;gap:16px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.93rem}
+.qrow .k{color:var(--ink-2)}
+.qrow .v{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.qrow.total{border-top:1px solid var(--line);border-bottom:0;margin-top:6px;padding-top:12px;align-items:baseline}
+.qrow.total .k{font-weight:700;color:var(--ink);font-size:1rem}
+.qrow.total .v{font-weight:800;font-size:1.5rem;font-family:"Gabarito",sans-serif;letter-spacing:-.02em}
+.bank{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--musgo-soft);font-size:.92rem;color:var(--ink-2)}
+.bank b{color:var(--musgo)}
+.bank small{display:block;color:var(--muted);margin-top:4px;font-size:.78rem}
+.sim .btn{width:100%;margin-top:14px}
+.legal{font-size:.78rem;color:var(--muted);margin-top:12px;line-height:1.45}
+
+/* sections */
+section{padding:72px 0}
+section.alt{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.sechead{max-width:60ch;margin-bottom:36px}
+.sechead p{color:var(--ink-2);font-size:1.08rem;margin-top:12px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px}
+.step .n{font-family:"Gabarito",sans-serif;font-weight:800;color:var(--ruiva);font-size:1.6rem;letter-spacing:-.03em}
+.step h3{margin:6px 0 8px}
+.step p{margin:0;color:var(--ink-2);font-size:.95rem}
+.step .t{display:inline-block;margin-top:12px;font-size:.78rem;color:var(--muted);font-family:"IBM Plex Mono",monospace}
+
+.cmp{overflow-x:auto}
+.cmp table{width:100%;border-collapse:collapse;font-size:.95rem;min-width:640px}
+.cmp th,.cmp td{text-align:left;padding:14px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.cmp th{font-family:"Gabarito",sans-serif;font-weight:700;font-size:.95rem}
+.cmp th.fx{color:var(--ruiva)}
+.cmp td.fx{font-weight:600;color:var(--ink)}
+.cmp td{color:var(--ink-2)}
+.cmp .no{color:var(--crit)}
+.cmp .yes{color:var(--musgo);font-weight:600}
+
+.who{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.who div{border-top:3px solid var(--ruiva);padding-top:16px}
+.who h3{margin-bottom:8px}
+.who p{color:var(--ink-2);font-size:.95rem;margin:0}
+
+.docs{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.doclist{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.doclist li{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;font-size:.98rem;color:var(--ink-2)}
+.doclist li b{color:var(--ink)}
+.doclist i{width:22px;height:22px;border-radius:50%;background:var(--musgo-soft);color:var(--musgo);display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-weight:700;font-size:.8rem;margin-top:2px}
+.receipt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 24px;font-size:.9rem;box-shadow:var(--shadow)}
+.receipt .head{display:flex;justify-content:space-between;align-items:center;gap:16px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+.receipt .head .wm{font-size:1.35rem;padding-bottom:.4em}
+.stamp{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:var(--musgo-soft);color:var(--musgo);font-weight:700;font-size:.82rem}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px}
+.kv div{display:grid;gap:2px}
+.kv span{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-family:"Gabarito",sans-serif;font-weight:700}
+.kv b{font-weight:500}
+.kv .hash{font-family:"IBM Plex Mono",monospace;font-size:.76rem;overflow-wrap:anywhere;color:var(--ink-2)}
+
+.sec{display:grid;grid-template-columns:1.1fr .9fr;gap:40px}
+.sec ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:.98rem}
+.sec li{margin-bottom:8px}
+.callout{border-left:4px solid var(--ruiva);padding:14px 18px;background:var(--surface);border-radius:0 14px 14px 0;font-size:.95rem;color:var(--ink-2)}
+.callout p:last-child{margin:0}
+
+.faq{max-width:760px}
+.faq details{border-bottom:1px solid var(--line);padding:6px 0}
+.faq summary{cursor:pointer;font-family:"Gabarito",sans-serif;font-weight:700;font-size:1.05rem;padding:12px 0;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--ruiva);font-weight:800;font-size:1.3rem;line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq details p{color:var(--ink-2);margin:0 0 14px;max-width:62ch}
+
+.final{background:var(--ink);color:var(--bg);padding:72px 0}
+.final .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.final h2{color:var(--bg)}
+.final p{color:color-mix(in srgb,var(--bg) 75%,transparent)}
+.lead-form{background:var(--surface);color:var(--ink);border-radius:18px;padding:22px}
+.lead-form .field label{color:var(--muted)}
+.lead-form .inp{background:var(--bg)}
+.lead-form .inp input{font-family:"Figtree",sans-serif;font-size:1rem}
+.lead-form .btn{width:100%}
+.lead-form .ok{display:none;padding:14px;border-radius:12px;background:var(--musgo-soft);color:var(--musgo);font-weight:600}
+.lead-form.sent form{display:none}
+.lead-form.sent .ok{display:block}
+.err{color:var(--crit);font-size:.85rem;margin:-6px 0 10px;display:none}
+
+footer{padding:40px 0;font-size:.85rem;color:var(--muted)}
+footer .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px}
+footer .wm{font-size:1.4rem}
+footer p{max-width:70ch;line-height:1.5}
+footer ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+footer ul a{color:var(--ink-2);text-decoration:none}
+
+@media (max-width:900px){
+  nav.top ul{display:none}
+  .hero .wrap{grid-template-columns:1fr;gap:32px}
+  .trust .wrap{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .who{grid-template-columns:1fr}
+  .docs,.sec,.final .wrap,footer .wrap{grid-template-columns:1fr}
+}
+@media (max-width:540px){
+  .steps,.trust .wrap,.inrow,.kv{grid-template-columns:1fr}
+  section{padding:56px 0}
+}
+:focus-visible{outline:2px solid var(--ruiva);outline-offset:2px}
+</style>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="wm" href="#topo" data-wm></a>
+    <ul>
+      <li><a href="#como">Como funciona</a></li>
+      <li><a href="#custos">Custos</a></li>
+      <li><a href="#quem">Para quem</a></li>
+      <li><a href="#seguranca">Segurança</a></li>
+      <li><a href="#faq">Perguntas</a></li>
+    </ul>
+    <div class="acts">
+      <a class="btn ghost small" href="app/">Entrar</a>
+      <a class="btn small" href="#piloto">Criar conta</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="topo">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Pagamento internacional para importadores</p>
+      <h1 style="margin-top:10px">Esperto é ver o custo antes de pagar.</h1>
+      <p class="lead" style="margin-top:16px">Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela por 60 segundos e comprovante com contrato de câmbio no fim. Você paga um Pix. O fornecedor recebe em minutos.</p>
+      <div class="cta">
+        <a class="btn" href="#piloto">Criar conta da empresa</a>
+        <a class="btn ghost" href="app/">Testar a demonstração</a>
+      </div>
+      <p class="note">Só para pessoa jurídica. Aprovação em até 1 dia útil. Sem mensalidade: você paga só quando envia.</p>
+    </div>
+
+    <div class="sim" id="simulador" aria-label="Simulador de custo">
+      <div class="bar"><b>Simule um pagamento</b><span>Custo total, sem cadastro</span></div>
+      <div class="body">
+        <div class="inrow">
+          <div class="field">
+            <label for="usd">Valor ao fornecedor</label>
+            <div class="inp"><span>USD</span><input id="usd" inputmode="decimal" value="10.000,00" aria-describedby="usdhelp"></div>
+          </div>
+          <div class="field">
+            <label for="dest">Destino</label>
+            <div class="inp"><select id="dest"><option value="cn">China · USDT</option><option value="us">EUA · USDC</option><option value="usb">EUA · conta bancária (ACH)</option></select></div>
+          </div>
+        </div>
+        <div class="chips" id="usdhelp" aria-label="Valores rápidos">
+          <button class="chip" data-v="2500">USD 2.500</button>
+          <button class="chip" data-v="10000">USD 10.000</button>
+          <button class="chip" data-v="25000">USD 25.000</button>
+        </div>
+        <div class="qrow"><span class="k">Câmbio base</span><span class="v num" id="o-rate">5,42000000</span></div>
+        <div class="qrow"><span class="k">Spread do parceiro (<span id="o-spr-p">0,35%</span>)</span><span class="v num" id="o-spr">R$ 189,70</span></div>
+        <div class="qrow"><span class="k">Taxa FoxyPay (<span id="o-tk-p">0,60%</span>)</span><span class="v num" id="o-tk">R$ 325,20</span></div>
+        <div class="qrow"><span class="k">IOF (0,38%)</span><span class="v num" id="o-iof">R$ 205,96</span></div>
+        <div class="qrow"><span class="k" id="o-net-k">Tarifa de rede</span><span class="v num" id="o-net">R$ 5,42</span></div>
+        <div class="qrow total"><span class="k">Você paga via Pix</span><span class="v num" id="o-total">R$ 54.926,28</span></div>
+        <div class="bank">No banco, este pagamento custaria cerca de <b id="o-bank">R$ 56.181,96</b>. Com a FoxyPay você paga <b id="o-save">R$ 1.255,68 a menos</b>.<small>Comparação ilustrativa: spread bancário médio de 3% mais tarifa de R$ 150. Câmbio de referência de hoje; a cotação real é travada na hora do pagamento. Não é uma cotação de banco.</small></div>
+        <a class="btn" href="#piloto">Criar conta para pagar</a>
+        <p class="legal">A conversão e o envio são executados por parceiro autorizado pelo Banco Central do Brasil (PSAV). O Pix é recebido na conta de instituição de pagamento autorizada. A FoxyPay não custodia valores nem realiza câmbio.</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="trust">
+  <div class="wrap">
+    <div><i></i><span>Execução por PSAV autorizado pelo Banco Central</span></div>
+    <div><i></i><span>Pix recebido em conta de IP autorizada, nunca na nossa</span></div>
+    <div><i></i><span>Contrato de câmbio e comprovante em todo pagamento</span></div>
+    <div><i></i><span>Conta só para PJ, com 2FA obrigatório</span></div>
+  </div>
+</div>
+
+<section id="como">
+  <div class="wrap">
+    <div class="sechead">
+      <p class="eyebrow">Como funciona</p>
+      <h2>Quatro passos. O quarto é um Pix.</h2>
+      <p>Sem contato humano do cadastro ao comprovante. Se algo sair da rota, nossa equipe entra antes de você precisar pedir.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Cadastre a empresa</h3><p>CNPJ, sócios e documentos. A verificação é feita pelo parceiro regulado e você recebe limites iniciais de R$ 150 mil por pagamento.</p><span class="t">até 1 dia útil</span></div>
+      <div class="step"><div class="n">2</div><h3>Cadastre o fornecedor</h3><p>Carteira de stablecoin ou conta bancária no exterior, com os dados da empresa dele. Passa por checagem antes do primeiro envio.</p><span class="t">minutos</span></div>
+      <div class="step"><div class="n">3</div><h3>Cote e trave</h3><p>Anexe a invoice, veja o custo total linha por linha e trave a cotação por 60 segundos. O valor do Pix é o valor final.</p><span class="t">60 s</span></div>
+      <div class="step"><div class="n">4</div><h3>Pague o Pix</h3><p>O parceiro converte e envia. Você acompanha em tempo real e baixa comprovante e contrato de câmbio quando chegar.</p><span class="t">4 a 20 min típicos</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="custos">
+  <div class="wrap">
+    <div class="sechead">
+      <p class="eyebrow">Custos</p>
+      <h2>Tudo aberto antes de você confirmar.</h2>
+      <p>Câmbio base, spread do parceiro, nossa taxa, IOF e tarifa de rede. Cinco linhas, sem "a partir de", sem surpresa no extrato.</p>
+    </div>
+    <div class="cmp">
+      <table>
+        <tr><th>Num pagamento de USD 10.000</th><th>Banco</th><th>Intermediário informal</th><th class="fx">FoxyPay</th></tr>
+        <tr><td>Spread sobre o câmbio</td><td>2% a 4%</td><td>1% a 2%, sem saber ao certo</td><td class="fx">0,35% do parceiro + 0,60% nossa, na tela</td></tr>
+        <tr><td>Tarifa fixa</td><td>R$ 100 a R$ 300</td><td>varia</td><td class="fx">R$ 0. Só a tarifa de rede, centavos</td></tr>
+        <tr><td>IOF</td><td>0,38%</td><td class="no">geralmente não recolhido</td><td class="fx">0,38%, recolhido e discriminado</td></tr>
+        <tr><td>Prazo até o fornecedor</td><td>2 a 5 dias úteis</td><td>horas</td><td class="fx">minutos a horas</td></tr>
+        <tr><td>Contrato de câmbio</td><td class="yes">sim</td><td class="no">não</td><td class="yes">sim, emitido pelo parceiro</td></tr>
+        <tr><td>Comprovante que o contador aceita</td><td class="yes">sim</td><td class="no">não</td><td class="yes">sim, em PDF, com hash ou referência bancária</td></tr>
+        <tr><td>Custo total estimado</td><td class="num mono">≈ R$ 56.180</td><td class="num mono">≈ R$ 55.000, sem papel</td><td class="fx num mono">R$ 54.926,28</td></tr>
+      </table>
+    </div>
+    <p class="legal" style="margin-top:14px">Valores ilustrativos com câmbio de referência de 5,42. Nossa taxa varia por faixa de volume e cai a partir de USD 25 mil por mês. A tabela completa aparece no painel antes de cada pagamento.</p>
+  </div>
+</section>
+
+<section id="quem">
+  <div class="wrap">
+    <div class="sechead">
+      <p class="eyebrow">Para quem</p>
+      <h2>Feita para quem compra fora e vende aqui.</h2>
+    </div>
+    <div class="who">
+      <div><h3>Sellers de marketplace</h3><p>Shopee, Mercado Livre e Amazon. Reposição de estoque toda semana, fornecedor em Shenzhen ou Yiwu, e margem que não aguenta 3% de spread.</p></div>
+      <div><h3>Dropshipping</h3><p>Volume alto de pagamentos pequenos, tudo em USDT. Cadastre o fornecedor uma vez e pague em três cliques nas próximas.</p></div>
+      <div><h3>Indústria e distribuidor</h3><p>Insumo, peça e máquina. Invoice vinculada em cada pagamento, contrato de câmbio para o despachante e extrato mensal para o contador.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="documentos">
+  <div class="wrap docs">
+    <div>
+      <p class="eyebrow">Documentos</p>
+      <h2 style="margin-top:8px">Papel que o contador aceita.</h2>
+      <p class="lead" style="margin:14px 0 22px">Todo pagamento gera um conjunto completo. Fica na sua central de documentos por cinco anos e sai em CSV ou XLSX quando o contador pedir.</p>
+      <ul class="doclist">
+        <li><i>✓</i><span><b>Comprovante em PDF</b> com pagador, fornecedor, valores, câmbio efetivo, hash da transação ou referência bancária e o nome do parceiro regulado.</span></li>
+        <li><i>✓</i><span><b>Contrato de câmbio</b> emitido pelo parceiro, vinculado ao pedido.</span></li>
+        <li><i>✓</i><span><b>Invoice ou proforma</b> anexada e guardada junto com o pagamento.</span></li>
+        <li><i>✓</i><span><b>Extrato mensal</b> por empresa, com os dados que suas obrigações fiscais pedem. Não damos parecer fiscal, damos os dados.</span></li>
+        <li><i>✓</i><span><b>Acesso de leitura para o contador</b>, sem poder de pagar.</span></li>
+      </ul>
+    </div>
+    <div class="receipt" aria-label="Exemplo de comprovante">
+      <div class="head"><span class="wm" data-wm></span><span class="stamp">Pago · 7 set 2026, 14:41</span></div>
+      <p class="eyebrow" style="color:var(--muted);margin-bottom:10px">Comprovante de pagamento internacional · Nº FXP-2026-004182</p>
+      <div class="kv">
+        <div><span>Pagador</span><b>Loja Norte Importados Ltda.</b></div>
+        <div><span>Fornecedor</span><b>Shenzhen Huaxin Electronics Co., Ltd.</b></div>
+        <div><span>Valor enviado</span><b class="mono num">USDT 10.000,00 · Tron</b></div>
+        <div><span>Valor pago via Pix</span><b class="mono num">R$ 54.926,28</b></div>
+        <div><span>Câmbio efetivo</span><b class="mono num">1 USD = 5,49262800</b></div>
+        <div><span>Invoice</span><b class="mono">PI-HX-20260901-77</b></div>
+        <div style="grid-column:1/-1"><span>Hash on-chain</span><b class="hash">7f3a9c1e4b2d8a6f0e5c3b9d1a7f2e8c4b6d0a3f9e1c7b5d2a8f4e6c0b3d9a1f</b></div>
+      </div>
+      <p class="legal">Exemplo ilustrativo. Execução por parceiro PSAV autorizado. Contrato de câmbio anexo.</p>
+    </div>
+  </div>
+</section>
+
+<section id="seguranca">
+  <div class="wrap sec">
+    <div>
+      <p class="eyebrow">Segurança e regulação</p>
+      <h2 style="margin-top:8px">Seu dinheiro nunca passa por nós. E isso é de propósito.</h2>
+      <p class="lead" style="margin:14px 0 18px">A FoxyPay é a camada de produto, experiência e dados. Quem custodia, converte e envia é um prestador de serviços de ativos virtuais autorizado pelo Banco Central, e quem recebe o seu Pix é uma instituição de pagamento autorizada.</p>
+      <ul>
+        <li>Nenhum saldo parado: o fluxo é sempre Pix, conversão, fornecedor.</li>
+        <li>Fornecedor novo com valor alto, país sancionado ou Pix com valor diferente param automaticamente para revisão.</li>
+        <li>Dados da Travel Rule (originador e beneficiário) enviados ao parceiro em toda transferência on-chain.</li>
+        <li>2FA obrigatório, sessões curtas, papéis por usuário (dono, financeiro, leitura) e trilha de auditoria completa.</li>
+        <li>LGPD: base legal registrada, dados mínimos, criptografia em repouso e encarregado nomeado.</li>
+      </ul>
+    </div>
+    <div class="callout">
+      <p class="eyebrow" style="margin-bottom:6px">Quem faz o quê</p>
+      <p>A FoxyPay é uma empresa de tecnologia. A custódia de ativos virtuais, a conversão e o envio ao exterior são realizados por <b>[PSAV parceira]</b>, prestadora de serviços de ativos virtuais autorizada pelo Banco Central do Brasil nos termos das Resoluções BCB 519, 520 e 521. Os pagamentos via Pix são recebidos na conta de <b>[IP parceira]</b>, instituição de pagamento autorizada. A FoxyPay não custodia valores, não realiza operações de câmbio e não movimenta recursos fora das contas dos parceiros.</p>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="faq">
+  <div class="wrap">
+    <div class="sechead">
+      <p class="eyebrow">Perguntas</p>
+      <h2>O que todo mundo pergunta antes do primeiro pagamento.</h2>
+    </div>
+    <div class="faq">
+      <details open><summary>Meu fornecedor precisa aceitar stablecoin?</summary><p>Para China, a maioria dos fornecedores que vendem para o Brasil já aceita USDT na rede Tron. Se o seu não aceitar, cadastre a conta bancária dele e, quando o parceiro tiver liquidação em moeda local naquele país, o pagamento sai em fiat. Você vê a opção na hora de cadastrar.</p></details>
+      <details><summary>O que é "cotação travada"?</summary><p>Quando você confirma, a cotação fica fixa por 60 segundos e geramos um Pix com o valor exato. Se o Pix chega nesse tempo, esse é o custo, sem ajuste depois. Se não chega, a cotação expira e nada é cobrado.</p></details>
+      <details><summary>Quanto tempo leva?</summary><p>Do Pix recebido até o fornecedor ver o valor: tipicamente entre 4 e 20 minutos para stablecoin. Mostramos o tempo real medido no painel, não uma promessa.</p></details>
+      <details><summary>Serve para pessoa física?</summary><p>Não. A FoxyPay é só para empresas com CNPJ ativo, e o pagamento precisa de invoice ou proforma e natureza da operação (mercadoria ou serviço).</p></details>
+      <details><summary>Vocês são um banco ou uma exchange?</summary><p>Nenhum dos dois. Somos a tecnologia e a experiência. A execução regulada é do nosso parceiro autorizado pelo Banco Central, e o nome dele aparece em toda tela de pagamento e em todo comprovante.</p></details>
+      <details><summary>E se der errado no meio?</summary><p>Se o envio não for executado, o valor volta para a conta de origem do Pix e nenhuma taxa é cobrada. Você recebe e-mail em cada mudança de status e a timeline do pedido mostra onde o dinheiro está.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final" id="piloto">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow" style="color:var(--mel)">Piloto</p>
+      <h2 style="margin-top:8px">Estamos abrindo para cinco importadores.</h2>
+      <p style="font-size:1.08rem;max-width:50ch;margin-top:14px">Pagamentos reais de até R$ 50 mil, acompanhamento direto com a nossa equipe e nossa taxa a zero durante o piloto. Deixe seu contato e a gente chama em ordem de chegada.</p>
+    </div>
+    <div class="lead-form" id="leadform">
+      <form novalidate>
+        <div class="field"><label for="f-email">E-mail corporativo</label><div class="inp"><input id="f-email" type="email" placeholder="voce@suaempresa.com.br" autocomplete="email"></div></div>
+        <div class="field"><label for="f-cnpj">CNPJ</label><div class="inp"><input id="f-cnpj" inputmode="numeric" placeholder="00.000.000/0001-00"></div></div>
+        <div class="field"><label for="f-vol">Quanto você paga fora por mês</label><div class="inp"><select id="f-vol"><option>Até USD 5 mil</option><option selected>USD 5 mil a 25 mil</option><option>USD 25 mil a 100 mil</option><option>Mais de USD 100 mil</option></select></div></div>
+        <p class="err" id="f-err">Preencha um e-mail válido e um CNPJ com 14 dígitos.</p>
+        <button class="btn" type="submit">Entrar na lista do piloto</button>
+        <p class="legal">Ao enviar, você concorda com a política de privacidade. Usamos os dados só para o contato do piloto.</p>
+      </form>
+      <div class="ok">Recebido. Respondemos em até 1 dia útil.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <span class="wm" data-wm></span>
+      <p>FoxyPay Tecnologia Ltda. · CNPJ 00.000.000/0001-00 · São Paulo, SP. A FoxyPay é uma empresa de tecnologia e não é instituição financeira, instituição de pagamento ou prestadora de serviços de ativos virtuais. A execução é realizada por [PSAV parceira], autorização BCB nº ____, e o Pix é recebido por [IP parceira], autorização BCB nº ____. Simulações são ilustrativas e não constituem oferta. Não prestamos consultoria fiscal.</p>
+      <p>© 2026 FoxyPay</p>
+    </div>
+    <ul>
+      <li><a href="#como">Como funciona</a></li>
+      <li><a href="#custos">Custos</a></li>
+      <li><a href="#seguranca">Segurança e regulação</a></li>
+      <li><a href="#faq">Perguntas frequentes</a></li>
+      <li><a href="app/">Demonstração do painel</a></li>
+      <li><a href="marca/">Identidade de marca</a></li>
+      <li><a href="#">Termos de uso</a></li>
+      <li><a href="#">Política de privacidade</a></li>
+      <li><a href="mailto:oi@foxypay.com.br">oi@foxypay.com.br</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var WM='<span>Fox</span><svg class="yg" viewBox="0 0 62 70" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg><span>Pay</span>';
+  var els=document.querySelectorAll('[data-wm]'); for(var i=0;i<els.length;i++){ els[i].innerHTML=WM; els[i].setAttribute('aria-label','FoxyPay'); }
+
+  // Simulador. Parâmetros de referência (em produção vêm de tabela versionada). Dinheiro em centavos.
+  var P={ rate:542000000 /* 5.42000000 x 1e8 */, spreadBp:35, iofBp:38, bankSpreadBp:300, bankFeeCents:15000,
+          net:{cn:542, us:1100, usb:2500}, netLabel:{cn:'Tarifa de rede (Tron)', us:'Tarifa de rede (Polygon)', usb:'Tarifa ACH'} };
+  function takeBp(usdCents){ if(usdCents>=5000000) return 40; if(usdCents>=2500000) return 50; return 60; }
+  function brl(c){ return 'R$ '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function pct(bp){ return (bp/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'; }
+  function parseUsd(s){ s=String(s).replace(/[^\d,.]/g,''); if(s.indexOf(',')>-1){ s=s.replace(/\./g,'').replace(',','.'); } else if((s.match(/\./g)||[]).length>1){ s=s.replace(/\./g,''); } var n=parseFloat(s); return isNaN(n)?0:Math.round(n*100); }
+  function fmtUsd(c){ return (c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function bp(x,b){ return Math.round(x*b/10000); }
+  function calc(){
+    var usd=parseUsd(document.getElementById('usd').value); if(usd<100){usd=100;}
+    var dest=document.getElementById('dest').value;
+    var base=Math.round(usd*P.rate/1e8);
+    var spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=bp(base,P.iofBp), net=P.net[dest];
+    var total=base+spr+tk+iof+net;
+    var bank=base+bp(base,P.bankSpreadBp)+P.bankFeeCents+iof;
+    var save=bank-total;
+    var $=function(id){return document.getElementById(id)};
+    $('o-rate').textContent=(P.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8,maximumFractionDigits:8});
+    $('o-spr-p').textContent=pct(P.spreadBp); $('o-spr').textContent=brl(spr);
+    $('o-tk-p').textContent=pct(tb); $('o-tk').textContent=brl(tk);
+    $('o-iof').textContent=brl(iof);
+    $('o-net-k').textContent=P.netLabel[dest]; $('o-net').textContent=brl(net);
+    $('o-total').textContent=brl(total);
+    $('o-bank').textContent=brl(bank);
+    $('o-save').textContent= save>0 ? brl(save)+' a menos' : brl(-save)+' a mais';
+  }
+  var usdEl=document.getElementById('usd');
+  usdEl.addEventListener('input',calc);
+  usdEl.addEventListener('blur',function(){ var c=parseUsd(usdEl.value); if(c<100)c=100; usdEl.value=fmtUsd(c); calc(); });
+  document.getElementById('dest').addEventListener('change',calc);
+  var chips=document.querySelectorAll('.chip'); for(var j=0;j<chips.length;j++){ chips[j].addEventListener('click',function(e){ e.preventDefault(); usdEl.value=fmtUsd(parseInt(this.getAttribute('data-v'),10)*100); calc(); }); }
+  calc();
+
+  // Formulário do piloto (demonstração: valida e confirma na tela, sem backend)
+  var lf=document.getElementById('leadform'), form=lf.querySelector('form'), err=document.getElementById('f-err');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var em=document.getElementById('f-email').value.trim(), cj=document.getElementById('f-cnpj').value.replace(/\D/g,'');
+    var ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && cj.length===14;
+    if(!ok){ err.style.display='block'; return; }
+    err.style.display='none'; lf.classList.add('sent');
+  });
+  form.addEventListener('input',function(){ err.style.display='none'; });
+})();
+</script>
+
+</body>
+</html>

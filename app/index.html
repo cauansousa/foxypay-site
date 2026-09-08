@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoxyPay Painel</title>
+<meta name="description" content="Demonstração clicável do painel FoxyPay: cotação travada, Pix, acompanhamento e comprovante.">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="FoxyPay Painel">
+<meta property="og:description" content="Demonstração clicável do painel FoxyPay: cotação travada, Pix, acompanhamento e comprovante.">
+<style>[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700;800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#F6F4F1;--surface:#FFFFFF;--surface-2:#EEEAE4;--ink:#1E1A17;--ink-2:#4A423C;--muted:#857C74;--line:#DDD7D0;--ruiva:#E9541F;--ruiva-ink:#B93F13;--ruiva-soft:#FBE3D8;--mel:#F2B33D;--mel-ink:#8A5E0A;--mel-soft:#FBEFD2;--musgo:#2F6B4F;--musgo-soft:#D9EBE1;--crit:#B5432F;--crit-soft:#F6DCD7;--shadow:0 1px 2px rgba(30,26,23,.06),0 12px 32px rgba(30,26,23,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14110F;--surface:#1E1A17;--surface-2:#2A2420;--ink:#F3EEE8;--ink-2:#CFC6BD;--muted:#948A80;--line:#3A332D;--ruiva:#FF7A45;--ruiva-ink:#FFA07A;--ruiva-soft:#3D2418;--mel:#F5C451;--mel-ink:#F5C451;--mel-soft:#3A2D12;--musgo:#5FB98F;--musgo-soft:#183426;--crit:#E2735F;--crit-soft:#3E1F1A;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4)}}
+:root[data-theme="dark"]{--bg:#14110F;--surface:#1E1A17;--surface-2:#2A2420;--ink:#F3EEE8;--ink-2:#CFC6BD;--muted:#948A80;--line:#3A332D;--ruiva:#FF7A45;--ruiva-ink:#FFA07A;--ruiva-soft:#3D2418;--mel:#F5C451;--mel-ink:#F5C451;--mel-soft:#3A2D12;--musgo:#5FB98F;--musgo-soft:#183426;--crit:#E2735F;--crit-soft:#3E1F1A;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Figtree",system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+h1,h2,h3{font-family:"Gabarito","Figtree",sans-serif;margin:0;letter-spacing:-.02em;line-height:1.1}
+h1{font-size:22px;font-weight:800}h2{font-size:16px;font-weight:700}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.lbl{font-family:"Gabarito",sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+button{font:inherit;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 18px;border-radius:999px;background:var(--ruiva);color:#FFF7F2;border:0;font-family:"Gabarito",sans-serif;font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap}
+.btn:hover{background:var(--ruiva-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}.btn.ghost:hover{background:var(--surface-2);border-color:var(--ink)}
+.btn.dark{background:var(--ink);color:var(--bg)}.btn.dark:hover{background:var(--ink-2)}
+.btn.sm{height:36px;padding:0 14px;font-size:13px}
+.btn.full{width:100%}
+.wm{font-family:"Gabarito",sans-serif;font-weight:800;font-size:22px;letter-spacing:-.03em;line-height:1;display:inline-flex;align-items:baseline;white-space:nowrap;color:var(--ink);padding-bottom:10px}
+.wm svg{height:.7em;width:.6em;overflow:visible;margin:0 -.02em 0 -.01em;flex:none}
+.wm path{fill:none;stroke:var(--ruiva);stroke-width:17;stroke-linecap:round;stroke-linejoin:round}.wm circle{fill:var(--ruiva)}
+.ysym{overflow:visible}.ysym path{fill:none;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round}.ysym circle{fill:currentColor}
+
+.app{display:flex;min-height:100vh}
+aside{width:232px;flex:none;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 16px 16px;position:sticky;top:0;height:100vh}
+.nav{display:flex;flex-direction:column;gap:2px;margin-top:18px}
+.nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--ink-2);background:transparent;border:0;font-weight:500;font-size:14px;text-align:left;width:100%}
+.nav button.on{background:var(--bg);color:var(--ink);font-weight:600}
+.nav svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.who{margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px;border-radius:12px;background:var(--bg)}
+.who .av{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-family:"Gabarito",sans-serif;font-weight:700;font-size:13px}
+main{flex-grow:1;min-width:0;display:flex;flex-direction:column}
+.top{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;border-bottom:1px solid var(--line);gap:16px}
+.top .crumb{color:var(--muted);font-size:13px}
+.content{padding:28px 32px;display:flex;flex-direction:column;gap:20px;max-width:1240px}
+.screen{display:none}.screen.on{display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.kpi{padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.kpi .v{font-family:"Gabarito",sans-serif;font-size:26px;font-weight:800}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;font-family:"Gabarito",sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--line)}
+td{padding:14px 16px;border-bottom:1px solid var(--surface-2);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr.link{cursor:pointer}tr.link:hover td{background:var(--bg)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-weight:600;font-size:12px;white-space:nowrap}
+.pill i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--musgo-soft);color:var(--musgo)}.pill.go{background:var(--ruiva-soft);color:var(--ruiva-ink)}.pill.warn{background:var(--mel-soft);color:var(--mel-ink)}.pill.mute{background:var(--surface-2);color:var(--muted)}.pill.crit{background:var(--crit-soft);color:var(--crit)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) 480px;gap:24px;align-items:start}
+.field{display:flex;flex-direction:column;gap:6px}
+.inp{display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface)}
+.inp:focus-within{border-color:var(--ruiva)}
+.inp input,.inp select{border:0;background:transparent;color:var(--ink);font:inherit;font-size:15px;width:100%;outline:none}
+.inp input.mono{font-family:"IBM Plex Mono",monospace}
+.inp .pre{color:var(--muted);font-weight:500}
+.qrow{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.qrow .k{color:var(--ink-2)}
+.qrow.total{border-top:1px solid var(--line);border-bottom:0;margin-top:6px;padding-top:14px;align-items:baseline}
+.qrow.total .k{font-family:"Gabarito",sans-serif;font-weight:700;font-size:15px;color:var(--ink)}
+.qrow.total .v{font-family:"Gabarito",sans-serif;font-weight:800;font-size:28px;letter-spacing:-.02em}
+.lock{display:flex;align-items:center;gap:10px;margin:16px 0 4px;padding:10px 14px;border-radius:10px;background:var(--mel-soft);color:var(--mel-ink);font-weight:700;font-size:13px}
+.lock .t{margin-left:auto;font-size:16px}
+.lock.low{background:var(--crit-soft);color:var(--crit)}
+.bank{margin-top:12px;padding:12px 14px;border-radius:10px;background:var(--musgo-soft);font-size:13px;color:var(--ink-2);line-height:1.45}
+.bank b{color:var(--musgo)}.bank small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.legal{font-size:11.5px;color:var(--muted);line-height:1.45}
+.sniff{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.sniff .ysym{width:24px;height:19px;color:var(--ruiva)}
+.sniff b{color:var(--ink)}
+.attach{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px dashed var(--line);border-radius:12px;background:var(--surface)}
+.attach.ok{border-style:solid}
+.err{color:var(--crit);font-size:12.5px;display:none}
+.steps{display:flex;flex-direction:column;gap:12px}
+.step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);font-weight:500}
+.step i{width:12px;height:12px;border-radius:50%;background:var(--line);flex:none}
+.step.done{color:var(--ink);font-weight:600}.step.done i{background:var(--musgo)}
+.step.now{color:var(--ink);font-weight:600}.step.now i{background:var(--ruiva);box-shadow:0 0 0 4px var(--ruiva-soft)}
+.step.bad{color:var(--crit);font-weight:600}.step.bad i{background:var(--crit)}
+.tl{display:grid;gap:0}
+.ev{display:grid;grid-template-columns:64px 20px minmax(0,1fr);gap:12px;align-items:start}
+.ev .t{font-size:12px;color:var(--muted);padding-top:2px}
+.ev .d{display:flex;justify-content:center;padding-top:5px}.ev .d i{width:10px;height:10px;border-radius:50%;background:var(--musgo)}
+.ev.bad .d i{background:var(--crit)}.ev.warn .d i{background:var(--mel)}.ev.go .d i{background:var(--ruiva)}
+.ev .b{display:flex;flex-direction:column;gap:2px;padding-bottom:18px}
+.ev .b b{font-weight:600}.ev .b span{font-size:13px;color:var(--ink-2)}.ev .b small{font-size:11.5px;color:var(--muted)}
+.doc{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.doc svg{width:20px;height:20px;stroke:var(--ink-2);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.doc b{font-weight:600}.doc small{display:block;font-size:12px;color:var(--muted)}
+.doc button{margin-left:auto;background:none;border:0;color:var(--ruiva-ink);font-weight:600;font-size:13px}
+.nps{display:flex;gap:6px;flex-wrap:wrap}
+.nps button{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--line);background:transparent;color:var(--ink-2);font-weight:600;font-size:12px}
+.nps button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.simbar{position:fixed;right:20px;bottom:20px;z-index:20;width:300px;background:var(--ink);color:var(--bg);border-radius:14px;box-shadow:var(--shadow);padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.simbar .lbl{color:var(--mel)}
+.simbar button{height:38px;border-radius:999px;border:1.5px solid rgba(255,255,255,.22);background:transparent;color:var(--bg);font-weight:600;font-size:13px;text-align:left;padding:0 14px}
+.simbar button:hover{background:rgba(255,255,255,.08)}
+.simbar button:disabled{opacity:.3;cursor:not-allowed}
+.simbar .st{font-size:11.5px;color:rgba(255,255,255,.65)}
+.simbar .st b{color:var(--mel)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30}
+.toast.on{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(30,26,23,.55);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
+.modal.on{display:flex}
+.receipt{background:#FFFFFF;color:#1E1A17;border-radius:12px;width:620px;max-width:100%;padding:28px 32px;font-size:13px}
+.receipt .kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;margin-top:16px}
+.receipt .kv div{display:flex;flex-direction:column;gap:2px}
+.receipt .kv span{font-family:"Gabarito",sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#857C74}
+.receipt .wm{color:#1E1A17}.receipt .wm path{stroke:#E9541F}.receipt .wm circle{fill:#E9541F}
+.qr{fill:var(--ink)}
+.spin{width:18px;height:18px;border:2px solid var(--line);border-top-color:var(--ruiva);border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+.wag{display:inline-block}
+.wag.go path:nth-child(2){transform-origin:20px 92px;animation:wag .6s ease-in-out 1}
+@keyframes wag{0%{transform:rotate(0)}30%{transform:rotate(-8deg)}70%{transform:rotate(6deg)}100%{transform:rotate(0)}}
+@media (max-width:980px){aside{display:none}.two{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}.content{padding:20px 16px}.top{padding:0 16px}.simbar{width:calc(100% - 32px);right:16px;left:16px}}
+:focus-visible{outline:2px solid var(--ruiva);outline-offset:2px}
+</style>
+
+<div class="app">
+  <aside>
+    <a class="wm" href="../" data-wm style="text-decoration:none"></a>
+    <nav class="nav">
+      <button class="on" data-go="painel"><svg viewBox="0 0 24 24"><path d="M4 11 L12 4 L20 11 V20 H14 V14 H10 V20 H4 Z"/></svg>Painel</button>
+      <button data-go="novo"><svg viewBox="0 0 24 24"><path d="M4 12 H20 M14 6 L20 12 L14 18"/></svg>Pagamentos</button>
+      <button disabled style="opacity:.5"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20 C3 16 6 14 9 14 C12 14 15 16 15 20"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14 C19 14 21 16 21 19"/></svg>Fornecedores</button>
+      <button disabled style="opacity:.5"><svg viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z M14 3 V8 H19 M9 13 H16 M9 17 H16"/></svg>Documentos</button>
+    </nav>
+    <div class="who"><div class="av">LN</div><div style="display:flex;flex-direction:column;line-height:1.25"><span style="font-weight:600;font-size:13px">Loja Norte Importados</span><span style="font-size:12px;color:var(--muted)">Camila · Financeiro</span></div></div>
+  </aside>
+
+  <main>
+    <div class="top">
+      <div style="display:flex;align-items:baseline;gap:12px"><h1 id="title">Painel</h1><span class="crumb" id="crumb"></span></div>
+      <div id="topact"></div>
+    </div>
+
+    <!-- PAINEL -->
+    <section class="screen on content" id="s-painel">
+      <div class="grid4">
+        <div class="card kpi"><span class="lbl">Pago este mês</span><span class="v" id="k-paid">R$ 110.694,95</span><span style="font-size:12px;color:var(--muted)" id="k-paid-sub">3 pagamentos · USD 20.150,00</span></div>
+        <div class="card kpi"><span class="lbl">Em andamento</span><span class="v" style="color:var(--ruiva-ink)" id="k-going">2</span><span style="font-size:12px;color:var(--muted)">1 enviando · 1 em análise</span></div>
+        <div class="card kpi"><span class="lbl">Economia vs. banco</span><span class="v" style="color:var(--musgo)" id="k-save">R$ 2.653,03</span><span style="font-size:12px;color:var(--muted)">este mês, comparação ilustrativa</span></div>
+        <div class="card kpi"><span class="lbl">Limite disponível</span><span class="v" id="k-limit">R$ 389.305</span><span style="font-size:12px;color:var(--muted)">de R$ 500.000 por mês</span></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)"><h2>Pagamentos recentes</h2><button class="btn ghost sm" onclick="toast('Exportação em CSV enviada para o seu e-mail.')">Exportar CSV</button></div>
+        <table><thead><tr><th>Fornecedor</th><th>Valor</th><th>Pago via Pix</th><th>Status</th><th>Data</th></tr></thead><tbody id="orders"></tbody></table>
+      </div>
+      <p class="legal">Conversão e envio executados por [PSAV parceira], autorizada pelo Banco Central. Pix recebidos na conta de [IP parceira]. A FoxyPay não custodia valores nem realiza câmbio.</p>
+    </section>
+
+    <!-- NOVO PAGAMENTO -->
+    <section class="screen content" id="s-novo">
+      <div class="two">
+        <div class="card" style="padding:24px;display:flex;flex-direction:column;gap:18px">
+          <h2>Dados do pagamento</h2>
+          <div class="field"><span class="lbl">Fornecedor</span><div class="inp"><select id="f-sup"></select></div></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+            <div class="field"><span class="lbl">Valor para o fornecedor</span><div class="inp"><span class="pre mono">USD</span><input class="mono" id="f-usd" inputmode="decimal" value="10.000,00"></div></div>
+            <div class="field"><span class="lbl">Natureza da operação</span><div class="inp"><select id="f-nat"><option>Importação de mercadoria</option><option>Serviço contratado no exterior</option></select></div></div>
+          </div>
+          <div class="field"><span class="lbl">Invoice ou proforma (obrigatório)</span>
+            <div class="attach" id="f-att"><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round"><path d="M8 12 L15 5 A3 3 0 0 1 19 9 L11 17 A5 5 0 0 1 4 10 L12 2"/></svg><span id="f-att-txt" style="color:var(--muted)">Nenhum arquivo anexado</span><button class="btn ghost sm" style="margin-left:auto" onclick="attach()">Anexar PDF</button></div>
+            <span class="err" id="e-att">Anexe a invoice ou proforma para pedir a cotação.</span>
+          </div>
+          <div class="field"><span class="lbl">Referência interna (opcional)</span><div class="inp"><input id="f-ref" placeholder="Ex.: reposição set/26, lote 3"></div></div>
+          <div style="display:flex;gap:12px;padding:14px 16px;border-radius:12px;background:var(--bg);font-size:13px;color:var(--ink-2);line-height:1.45">Os dados do originador e do beneficiário vão para o parceiro regulado junto com a transferência (Travel Rule). Você não precisa preencher nada a mais.</div>
+          <div><button class="btn" id="b-quote" onclick="requestQuote()">Pedir cotação</button></div>
+        </div>
+        <div class="card" id="quote-card">
+          <div class="sniff" id="q-head"><svg class="ysym" viewBox="0 0 160 125"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg><span id="q-head-txt">Preencha os dados e peça a cotação.</span></div>
+          <div style="padding:20px 22px" id="q-body">
+            <div style="color:var(--muted);font-size:13px;line-height:1.5">Você vai ver o câmbio base, o spread do parceiro, a nossa taxa, o IOF e a tarifa de rede antes de confirmar. A cotação fica travada por 60 segundos.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIX -->
+    <section class="screen content" id="s-pix">
+      <div class="two">
+        <div class="card" style="padding:28px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:28px;align-items:start">
+          <div style="padding:14px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface)"><svg id="qr" viewBox="0 0 200 200" style="width:220px;height:220px;display:block"></svg></div>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div><span class="lbl">Pague exatamente</span><div style="font-family:Gabarito,sans-serif;font-size:34px;font-weight:800;letter-spacing:-.02em" id="p-total"></div></div>
+            <div class="lock" id="p-lock">Pix válido por<span class="t mono" id="p-timer">1:00</span></div>
+            <div class="field"><span class="lbl">Pix copia e cola</span><div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)"><span class="mono" id="p-code" style="font-size:12px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span><button class="btn ghost sm" style="margin-left:auto" onclick="copyCode()">Copiar</button></div></div>
+            <div style="font-size:13px;color:var(--ink-2);line-height:1.5;display:flex;flex-direction:column;gap:6px"><span>Favorecido: <b>[IP parceira] · CNPJ 00.000.000/0001-00</b>. O Pix vai para a conta da instituição de pagamento parceira, nunca para a FoxyPay.</span><span>Pagamentos com valor diferente do exato entram em revisão manual e podem atrasar o envio.</span></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:12px"><h2 style="font-size:15px" id="p-id"></h2><div class="steps" id="p-steps"></div></div>
+          <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:6px;font-size:13px"><span class="lbl">Custo travado</span><div id="p-break"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PEDIDO / ACOMPANHAMENTO -->
+    <section class="screen content" id="s-pedido">
+      <div class="card" style="padding:22px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+        <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;color:var(--muted)" id="o-sub"></span><div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap"><span style="font-family:Gabarito,sans-serif;font-size:30px;font-weight:800;letter-spacing:-.02em" id="o-usd"></span><span class="mono" style="color:var(--ink-2)" id="o-brl"></span></div></div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:12px" id="o-status"></div>
+      </div>
+      <div id="o-banner"></div>
+      <div class="two" style="grid-template-columns:minmax(0,1fr) 420px">
+        <div class="card" style="padding:22px 24px"><h2 style="font-size:15px;margin-bottom:18px">Linha do tempo</h2><div class="tl" id="o-tl"></div></div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:10px"><h2 style="font-size:15px">Documentos</h2><div id="o-docs" style="display:flex;flex-direction:column;gap:10px"></div></div>
+          <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:8px;font-size:13px" id="o-det"></div>
+          <div class="card" style="padding:14px 16px;display:none;flex-direction:column;gap:8px" id="o-nps"><span style="font-size:13px;font-weight:600">Como foi pagar com a FoxyPay?</span><div class="nps" id="nps"></div><span style="font-size:12px;color:var(--muted)" id="nps-txt"></span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="simbar" id="sim">
+  <span class="lbl">Demonstração · simule o parceiro</span>
+  <span class="st" id="sim-st">Estado: <b>—</b></span>
+  <button id="sim-pix" onclick="simPix(false)" disabled>Pix recebido (valor exato)</button>
+  <button id="sim-div" onclick="simPix(true)" disabled>Pix recebido com valor divergente</button>
+  <button id="sim-exp" onclick="simExpire()" disabled>Deixar a cotação expirar (3 s)</button>
+  <button id="sim-fail" onclick="simFail()" disabled>Falha na execução do parceiro</button>
+  <button onclick="resetAll()">Reiniciar protótipo</button>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal" onclick="if(event.target===this)this.classList.remove('on')">
+  <div class="receipt" id="receipt"></div>
+</div>
+
+<script>
+(function(){
+  // ---------- identidade ----------
+  var WM='<span>Fox</span><svg viewBox="0 0 62 70" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg><span>Pay</span>';
+  document.querySelectorAll('[data-wm]').forEach(function(e){e.innerHTML=WM;e.setAttribute('aria-label','FoxyPay');});
+
+  // ---------- parâmetros (em produção: tabela versionada) ----------
+  var P={rate:542000000, spreadBp:35, iofBp:38, bankSpreadBp:300, bankFeeCents:15000, quoteSeconds:60};
+  var SUPPLIERS=[
+    {id:'hx',name:'Shenzhen Huaxin Electronics Co., Ltd.',where:'Shenzhen, China',rail:'USDT · Tron',net:542,netLabel:'Tarifa de rede (Tron)',asset:'USDT'},
+    {id:'nb',name:'Ningbo Bright Tools Co.',where:'Ningbo, China',rail:'USDT · Tron',net:542,netLabel:'Tarifa de rede (Tron)',asset:'USDT'},
+    {id:'ap',name:'Austin Parts LLC',where:'Austin, EUA',rail:'ACH · Wells Fargo',net:2500,netLabel:'Tarifa ACH',asset:'USD'}
+  ];
+  function takeBp(usd){ return usd>=5000000?40:usd>=2500000?50:60; }
+  function brl(c){return 'R$ '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function usdf(c){return 'USD '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
+  function pct(bp){return (bp/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';}
+  function bp(x,b){return Math.round(x*b/10000);}
+  function parseUsd(s){s=String(s).replace(/[^\d,.]/g,'');if(s.indexOf(',')>-1){s=s.replace(/\./g,'').replace(',','.');}else if((s.match(/\./g)||[]).length>1){s=s.replace(/\./g,'');}var n=parseFloat(s);return isNaN(n)?0:Math.round(n*100);}
+  function hhmm(d){return d.toTimeString().slice(0,5);}
+  function hhmmss(d){return d.toTimeString().slice(0,8);}
+  var $=function(id){return document.getElementById(id)};
+  window.toast=function(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on')},2200);};
+
+  // ---------- estado ----------
+  var orders=[
+    {id:'FXP-2026-004180',sup:SUPPLIERS[0],usd:1000000,brl:5492628,status:'settled',when:'7 set, 14:41'},
+    {id:'FXP-2026-004178',sup:SUPPLIERS[1],usd:420000,brl:2306904,status:'executing',when:'7 set, 15:02'},
+    {id:'FXP-2026-004175',sup:{name:'Yiwu Sunrise Trading',rail:'USDT · Tron'},usd:1850000,brl:10158390,status:'under_review',when:'6 set, 11:20'},
+    {id:'FXP-2026-004171',sup:SUPPLIERS[2],usd:235000,brl:1292617,status:'settled',when:'4 set, 09:15'}
+  ];
+  var seq=4182, cur=null, quote=null, timer=null, secs=0, attached=false, execTimers=[];
+  var LABEL={quoted:['Cotação travada','warn'],awaiting_funds:['Aguardando seu Pix','mute'],funds_received:['Pix recebido','go'],executing:['Enviando ao fornecedor','go'],sent:['Enviado','go'],settled:['Pago','ok'],failed:['Não concluído','crit'],refunded:['Devolvido','mute'],expired:['Cotação expirou','mute'],under_review:['Em análise','warn']};
+  function pill(st){var l=LABEL[st];return '<span class="pill '+l[1]+'"><i></i>'+l[0]+'</span>';}
+
+  // ---------- navegação ----------
+  var TITLES={painel:['Painel',''],novo:['Novo pagamento','Pagamentos / Novo'],pix:['Pague o Pix',''],pedido:['Pedido','']};
+  window.go=function(s){
+    document.querySelectorAll('.screen').forEach(function(e){e.classList.remove('on')});
+    $('s-'+s).classList.add('on');
+    $('title').textContent=TITLES[s][0]; $('crumb').textContent=(s==='pix'||s==='pedido')&&cur?('Pagamentos / '+cur.id):TITLES[s][1];
+    document.querySelectorAll('.nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-go')===(s==='painel'?'painel':'novo'))});
+    $('topact').innerHTML = s==='painel' ? '<button class="btn" onclick="go(\'novo\')">Novo pagamento</button>' : s==='novo' ? '<button class="btn ghost" onclick="go(\'painel\')">Cancelar</button>' : s==='pix' ? '<button class="btn ghost" onclick="cancelOrder()">Cancelar pedido</button>' : '<button class="btn ghost" onclick="go(\'painel\')">Voltar ao painel</button>';
+    window.scrollTo(0,0);
+  };
+  document.querySelectorAll('.nav button[data-go]').forEach(function(b){b.addEventListener('click',function(){go(b.getAttribute('data-go'))})});
+
+  function renderOrders(){
+    var all=(cur?[cur]:[]).concat(orders);
+    $('orders').innerHTML=all.map(function(o){return '<tr class="link" onclick="openOrder(\''+o.id+'\')"><td><div style="display:flex;flex-direction:column;line-height:1.3"><span style="font-weight:600">'+o.sup.name+'</span><span style="font-size:12px;color:var(--muted)">'+o.sup.rail+'</span></div></td><td class="mono">'+usdf(o.usd)+'</td><td class="mono">'+(o.brl?brl(o.brl):'—')+'</td><td>'+pill(o.status)+'</td><td style="color:var(--muted)">'+o.when+'</td></tr>'}).join('');
+  }
+  window.openOrder=function(id){ if(cur&&cur.id===id){ go(cur.status==='awaiting_funds'||cur.status==='quoted'?'pix':'pedido'); } else { toast('Neste protótipo, só o pedido criado agora abre em detalhe.'); } };
+
+  // ---------- formulário ----------
+  $('f-sup').innerHTML=SUPPLIERS.map(function(s){return '<option value="'+s.id+'">'+s.name+' · '+s.rail+'</option>'}).join('');
+  window.attach=function(){attached=true;var a=$('f-att');a.classList.add('ok');$('f-att-txt').innerHTML='<b>PI-HX-20260901-77.pdf</b> <span style="color:var(--muted)">· 312 KB · anexado agora</span>';$('f-att-txt').style.color='';a.querySelector('button').textContent='Trocar';$('e-att').style.display='none';};
+  ['f-sup','f-usd','f-nat'].forEach(function(id){$(id).addEventListener('input',function(){ if(quote) invalidateQuote('Você alterou os dados. Peça uma nova cotação.'); });});
+
+  function calc(){
+    var usd=parseUsd($('f-usd').value); if(usd<100) usd=100;
+    var sup=SUPPLIERS.filter(function(s){return s.id===$('f-sup').value})[0];
+    var base=Math.round(usd*P.rate/1e8), spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=bp(base,P.iofBp), net=sup.net;
+    var total=base+spr+tk+iof+net, bank=base+bp(base,P.bankSpreadBp)+P.bankFeeCents+iof;
+    return {usd:usd,sup:sup,base:base,spr:spr,tb:tb,tk:tk,iof:iof,net:net,total:total,bank:bank,save:bank-total,rate:P.rate,nat:$('f-nat').value};
+  }
+  function breakdown(q){
+    return '<div class="qrow"><span class="k">'+usdf(q.usd)+' × '+(q.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8})+'</span><span class="v mono">'+brl(q.base)+'</span></div>'+
+      '<div class="qrow"><span class="k">Spread do parceiro ('+pct(P.spreadBp)+')</span><span class="v mono">'+brl(q.spr)+'</span></div>'+
+      '<div class="qrow"><span class="k">Taxa FoxyPay ('+pct(q.tb)+')</span><span class="v mono">'+brl(q.tk)+'</span></div>'+
+      '<div class="qrow"><span class="k">IOF ('+pct(P.iofBp)+')</span><span class="v mono">'+brl(q.iof)+'</span></div>'+
+      '<div class="qrow"><span class="k">'+q.sup.netLabel+'</span><span class="v mono">'+brl(q.net)+'</span></div>';
+  }
+  window.requestQuote=function(){
+    if(!attached){$('e-att').style.display='block';$('f-att').style.borderColor='var(--crit)';return;}
+    $('f-att').style.borderColor='';
+    $('b-quote').disabled=true;
+    $('q-head-txt').innerHTML='<span style="display:inline-flex;align-items:center;gap:10px"><span class="spin"></span>Farejando a cotação…</span>';
+    $('q-body').innerHTML='<div style="color:var(--muted);font-size:13px">Pedindo RFQ ao parceiro regulado.</div>';
+    setTimeout(function(){
+      quote=calc(); quote.at=new Date();
+      $('q-head-txt').innerHTML='<b>Foxy farejou a cotação</b> <span style="margin-left:8px">'+hhmmss(quote.at)+'</span>';
+      $('q-body').innerHTML=breakdown(quote)+
+        '<div class="qrow total"><span class="k">Você paga via Pix</span><span class="v mono">'+brl(quote.total)+'</span></div>'+
+        '<div class="lock" id="q-lock">Cotação travada<span class="t mono" id="q-timer">1:00</span></div>'+
+        '<div class="bank">No banco, este pagamento custaria cerca de <b>'+brl(quote.bank)+'</b>. Você paga <b>'+brl(quote.save)+' a menos</b>.<small>Comparação ilustrativa: spread bancário médio de 3% mais tarifa de R$ 150. Não é uma cotação de banco.</small></div>'+
+        '<button class="btn full" style="margin-top:16px" id="b-pix" onclick="createOrder()">Gerar Pix de '+brl(quote.total)+'</button>'+
+        '<p class="legal" style="margin:12px 0 0">A conversão e o envio são executados por [PSAV parceira], autorizada pelo Banco Central. O Pix é recebido na conta de [IP parceira]. A FoxyPay não custodia valores nem realiza câmbio.</p>';
+      startTimer(P.quoteSeconds, function(){ invalidateQuote('A cotação expirou. Nada foi cobrado. Peça uma nova cotação.'); });
+      $('b-quote').disabled=false; $('b-quote').textContent='Nova cotação';
+      setSim('quoted');
+    },1200);
+  };
+  function invalidateQuote(msg){
+    stopTimer(); quote=null;
+    $('q-head-txt').textContent=msg;
+    $('q-body').innerHTML='<div style="color:var(--muted);font-size:13px;line-height:1.5">Nenhum valor foi cobrado.</div>';
+    $('b-quote').textContent='Pedir cotação'; setSim(null);
+  }
+  function startTimer(n, onEnd){
+    stopTimer(); secs=n; paintTimer();
+    timer=setInterval(function(){secs--; paintTimer(); if(secs<=0){stopTimer(); onEnd();}},1000);
+  }
+  function stopTimer(){ if(timer){clearInterval(timer);timer=null;} }
+  function paintTimer(){
+    var s=Math.max(0,secs), txt=Math.floor(s/60)+':'+(s%60<10?'0':'')+(s%60);
+    ['q-timer','p-timer'].forEach(function(id){var e=$(id); if(e) e.textContent=txt;});
+    ['q-lock','p-lock'].forEach(function(id){var e=$(id); if(e) e.classList.toggle('low',s<=10);});
+  }
+
+  // ---------- pedido ----------
+  function event(o, st, title, desc, who, kind){
+    o.status=st; o.events.push({t:new Date(),st:st,title:title,desc:desc,who:who,kind:kind||''});
+    renderOrders(); setSim(st);
+  }
+  window.createOrder=function(){
+    if(!quote) return;
+    var id='FXP-2026-00'+(++seq);
+    cur={id:id,sup:quote.sup,usd:quote.usd,brl:quote.total,q:quote,status:'quoted',when:'agora',events:[],hash:null,nps:null};
+    event(cur,'quoted','Cotação travada','1 USD = '+(quote.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8})+' · custo total '+brl(quote.total)+' · válida por 60 s.','Camila (Financeiro)','warn');
+    event(cur,'awaiting_funds','Aguardando seu Pix','Pix gerado na conta da [IP parceira] com o valor exato '+brl(quote.total)+'.','FoxyPay · txid '+id.replace(/\D/g,'').slice(-6),'');
+    $('p-total').textContent=brl(quote.total); $('p-id').textContent='Pedido '+id;
+    $('p-code').textContent='00020126580014br.gov.bcb.pix0136a1b2c3d4-e5f6-7890-abcd-'+id.toLowerCase().replace(/-/g,'')+'52040000530398654'+String(quote.total/100).length+String(quote.total/100)+'5802BR5913IP PARCEIRA6009SAO PAULO62070503***6304A1B2';
+    $('p-break').innerHTML=breakdown(quote)+'<div class="qrow" style="border:0;font-weight:700"><span class="k" style="color:var(--ink)">Total do Pix</span><span class="v mono">'+brl(quote.total)+'</span></div>';
+    drawQR(id);
+    paintSteps();
+    go('pix');
+    startTimer(secs>0?secs:1, function(){ expireOrder(); });
+    $('q-body').innerHTML=''; $('q-head-txt').textContent='Pedido criado. Pague o Pix.'; $('b-quote').textContent='Pedir cotação'; quote=null;
+  };
+  function paintSteps(){
+    var st=cur.status, order=['quoted','awaiting_funds','funds_received','executing','settled'];
+    var names={quoted:'Cotação travada',awaiting_funds:'Aguardando seu Pix',funds_received:'Pix recebido',executing:'Enviando ao fornecedor',settled:'Pago'};
+    var idx=order.indexOf(st==='sent'?'executing':st);
+    $('p-steps').innerHTML=order.map(function(k,i){var c=i<idx?'done':i===idx?'now':'';return '<div class="step '+c+'"><i></i>'+names[k]+(k==='quoted'?' · '+hhmm(cur.events[0].t):'')+'</div>'}).join('');
+  }
+  window.cancelOrder=function(){ if(!cur||cur.status!=='awaiting_funds') return; stopTimer(); event(cur,'expired','Pedido cancelado','Você cancelou antes de pagar. Nada foi cobrado.','Camila (Financeiro)',''); cur.when='agora'; toast('Pedido cancelado. Nada foi cobrado.'); go('painel'); };
+  function expireOrder(){ if(!cur||cur.status!=='awaiting_funds') return; event(cur,'expired','Cotação expirou','O Pix não chegou dentro dos 60 segundos. Nada foi cobrado. Peça uma nova cotação.','FoxyPay',''); showOrder(); go('pedido'); }
+
+  // ---------- webhooks simulados ----------
+  function setSim(st){
+    $('sim-st').innerHTML='Estado: <b>'+(st?st:'—')+'</b>';
+    $('sim-pix').disabled = !(cur&&cur.status==='awaiting_funds');
+    $('sim-div').disabled = !(cur&&cur.status==='awaiting_funds');
+    $('sim-exp').disabled = !((cur&&cur.status==='awaiting_funds')||(quote&&!cur));
+    $('sim-fail').disabled = !(cur&&(cur.status==='funds_received'||cur.status==='executing'));
+  }
+  window.simExpire=function(){ if(timer){secs=3;paintTimer();toast('Timer encurtado para 3 segundos.');} };
+  window.simPix=function(divergent){
+    if(!cur||cur.status!=='awaiting_funds') return;
+    stopTimer();
+    if(divergent){
+      var got=cur.brl-60;
+      event(cur,'under_review','Em análise','Pix recebido com '+brl(got)+', '+brl(60)+' a menos que o valor travado. O envio não foi iniciado. Nossa equipe está verificando. Prazo: até 1 dia útil.','[IP parceira] · valor divergente','warn');
+      showOrder(); go('pedido'); toast('Pedido enviado para a fila da Toca.'); return;
+    }
+    event(cur,'funds_received','Pix recebido','Pix de '+brl(cur.brl)+' recebido na conta da [IP parceira]. Valor exato.','[IP parceira] · txid E'+Math.random().toString(16).slice(2,6).toUpperCase()+'…9F0A','go');
+    showOrder(); go('pedido');
+    execTimers.push(setTimeout(function(){ if(cur.status!=='funds_received')return; event(cur,'executing','Enviando ao fornecedor','A [PSAV parceira] está convertendo e enviando. Tempo típico: 4 a 20 minutos.','FoxyPay · ordem enviada ao parceiro','go'); showOrder(); },1800));
+    execTimers.push(setTimeout(function(){ if(cur.status!=='executing')return; cur.hash=hash(); event(cur,'sent','Enviado','Saiu para o fornecedor. Hash '+cur.hash.slice(0,8)+'…'+cur.hash.slice(-4)+' na rede '+(cur.sup.asset==='USDT'?'Tron':'ACH')+'.','[PSAV parceira]','go'); showOrder(); },4200));
+    execTimers.push(setTimeout(function(){ if(cur.status!=='sent')return; event(cur,'settled','Pago','Chegou. Comprovante e contrato de câmbio disponíveis.','[PSAV parceira] · 14 confirmações','ok'); cur.when='agora'; showOrder(); wag(); toast('Pago. A cauda abanou.'); },7000));
+  };
+  window.simFail=function(){
+    if(!cur||!(cur.status==='funds_received'||cur.status==='executing')) return;
+    execTimers.forEach(clearTimeout); execTimers=[];
+    event(cur,'failed','Não concluído','O envio não foi executado pelo parceiro (timeout). Seu dinheiro está sendo devolvido ao Pix de origem. Nenhuma taxa foi cobrada.','[PSAV parceira] · erro EXEC_TIMEOUT','bad');
+    showOrder();
+    setTimeout(function(){ if(cur.status!=='failed')return; event(cur,'refunded','Devolvido',brl(cur.brl)+' devolvidos à conta de origem.','[IP parceira] · devolução Pix',''); showOrder(); },2500);
+  };
+  function hash(){var h='';for(var i=0;i<64;i++)h+='0123456789abcdef'[Math.floor(Math.random()*16)];return h;}
+  function wag(){var w=document.querySelector('#o-status .wag');if(w){w.classList.add('go');setTimeout(function(){w.classList.remove('go')},800);}}
+
+  // ---------- tela do pedido ----------
+  function showOrder(){
+    var o=cur, q=o.q;
+    $('o-sub').textContent='Pedido '+o.id+' · '+o.sup.name;
+    $('o-usd').textContent=usdf(o.usd); $('o-brl').textContent=(o.status==='expired'?'cotação de ':'pago com ')+brl(o.brl)+' via Pix';
+    var wagsvg='<svg class="ysym wag" viewBox="0 0 160 125" style="width:26px;height:20px;color:var(--musgo)"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg>';
+    $('o-status').innerHTML=(o.status==='settled'?wagsvg:'')+pill(o.status)+(o.status==='settled'?'<button class="btn dark" onclick="go(\'novo\')">Repetir pagamento</button>':o.status==='expired'||o.status==='refunded'?'<button class="btn" onclick="go(\'novo\')">Pedir nova cotação</button>':'');
+    var ban='';
+    if(o.status==='under_review') ban='<div class="card" style="padding:14px 18px;border-left:4px solid var(--mel);font-size:13.5px;line-height:1.5">Nossa equipe está verificando este pagamento. O valor recebido ficou na conta da [IP parceira] e nenhuma execução foi iniciada. Você recebe e-mail quando mudar. Prazo: até 1 dia útil.</div>';
+    if(o.status==='failed') ban='<div class="card" style="padding:14px 18px;border-left:4px solid var(--crit);font-size:13.5px;line-height:1.5">O envio não foi executado. Seu dinheiro está sendo devolvido ao Pix de origem pela [IP parceira]. Nenhuma taxa foi cobrada.</div>';
+    if(o.status==='expired') ban='<div class="card" style="padding:14px 18px;border-left:4px solid var(--line);font-size:13.5px;line-height:1.5">O Pix não chegou dentro dos 60 segundos. Nada foi cobrado. Peça uma nova cotação.</div>';
+    if(o.status==='executing'||o.status==='funds_received'||o.status==='sent') ban='<div class="card" style="padding:14px 18px;display:flex;align-items:center;gap:12px;font-size:13.5px"><span class="spin"></span>Acompanhando junto ao parceiro. Esta tela atualiza sozinha.</div>';
+    $('o-banner').innerHTML=ban;
+    $('o-tl').innerHTML=o.events.slice().reverse().map(function(e){return '<div class="ev '+e.kind+'"><span class="t mono">'+hhmmss(e.t)+'</span><span class="d"><i></i></span><div class="b"><b>'+e.title+'</b><span>'+e.desc+'</span><small>'+e.who+'</small></div></div>'}).join('');
+    var docs='<div class="doc"><svg viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z M14 3 V8 H19 M9 13 H16 M9 17 H16"/></svg><div><b>Invoice PI-HX-20260901-77</b><small>PDF · 312 KB · anexada por Camila</small></div><button onclick="toast(\'Abrindo a invoice.\')">Abrir</button></div>';
+    if(o.status==='settled'){
+      docs='<div class="doc"><svg viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z M14 3 V8 H19 M9 13 H16 M9 17 H16"/></svg><div><b>Comprovante de pagamento</b><small>PDF · com hash e câmbio efetivo</small></div><button onclick="openReceipt()">Baixar</button></div>'+
+           '<div class="doc"><svg viewBox="0 0 24 24"><path d="M6 3 H14 L19 8 V21 H6 Z M14 3 V8 H19 M9 13 H16 M9 17 H16"/></svg><div><b>Contrato de câmbio</b><small>PDF · emitido por [PSAV parceira]</small></div><button onclick="toast(\'No piloto, o contrato de câmbio chega em até 1 dia útil.\')">Baixar</button></div>'+docs;
+    }
+    $('o-docs').innerHTML=docs;
+    var eff=Math.round(o.brl/o.usd*1e8)/1e8, fees=o.brl-q.base;
+    $('o-det').innerHTML='<span class="lbl">Detalhes</span>'+
+      '<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-2)">Câmbio travado</span><span class="mono">1 USD = '+(q.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8})+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-2)">Câmbio efetivo</span><span class="mono">1 USD = '+eff.toLocaleString('pt-BR',{minimumFractionDigits:8})+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-2)">Custo total</span><span class="mono">'+(fees/q.base*100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'% · '+brl(fees)+'</span></div>'+
+      '<div style="display:flex;justify-content:space-between"><span style="color:var(--ink-2)">Natureza</span><span>'+q.nat+'</span></div>'+
+      (o.hash?'<div style="display:flex;justify-content:space-between;gap:12px"><span style="color:var(--ink-2);flex:none">Hash</span><span class="mono" style="font-size:11.5px;overflow-wrap:anywhere;text-align:right;color:var(--ink-2)">'+o.hash+'</span></div>':'');
+    var npsBox=$('o-nps'); npsBox.style.display=o.status==='settled'?'flex':'none';
+    if(o.status==='settled'&&!$('nps').children.length){ for(var i=0;i<=10;i++){(function(n){var b=document.createElement('button');b.textContent=n;b.onclick=function(){cur.nps=n;Array.prototype.forEach.call($('nps').children,function(c){c.classList.toggle('on',+c.textContent===n)});$('nps-txt').textContent='Obrigado. Sua nota ('+n+') foi registrada.';};$('nps').appendChild(b);})(i);} }
+    if($('s-pix').classList.contains('on')) paintSteps();
+    $('crumb').textContent='Pagamentos / '+o.id;
+  }
+  window.openReceipt=function(){
+    var o=cur,q=o.q, paid=o.events.filter(function(e){return e.st==='settled'})[0];
+    $('receipt').innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #DDD7D0;padding-bottom:12px"><span class="wm" data-wm-r></span><span style="display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#D9EBE1;color:#2F6B4F;font-weight:700;font-size:12px">Pago · '+paid.t.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})+', '+hhmm(paid.t)+'</span></div>'+
+      '<div style="font-family:Gabarito,sans-serif;font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#857C74;margin-top:14px">Comprovante de pagamento internacional · Nº '+o.id+'</div>'+
+      '<div class="kv"><div><span>Pagador</span><b>Loja Norte Importados Ltda.</b><span class="mono" style="text-transform:none;letter-spacing:0;font-family:IBM Plex Mono,monospace;font-weight:400;font-size:12px;color:#4A423C">CNPJ 12.345.678/0001-90</span></div><div><span>Fornecedor</span><b>'+o.sup.name+'</b><span style="text-transform:none;letter-spacing:0;font-family:Figtree,sans-serif;font-weight:400;font-size:12px;color:#4A423C">'+(o.sup.where||'')+'</span></div>'+
+      '<div><span>Valor enviado</span><b class="mono">'+o.sup.asset+' '+(o.usd/100).toLocaleString('pt-BR',{minimumFractionDigits:2})+' · '+o.sup.rail+'</b></div><div><span>Valor pago via Pix</span><b class="mono">'+brl(o.brl)+'</b></div>'+
+      '<div><span>Câmbio efetivo</span><b class="mono">1 USD = '+(Math.round(o.brl/o.usd*1e8)/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8})+' BRL</b></div><div><span>Invoice vinculada</span><b class="mono">PI-HX-20260901-77</b></div>'+
+      '<div style="grid-column:1/-1"><span>Hash on-chain</span><b class="mono" style="font-size:11.5px;overflow-wrap:anywhere">'+o.hash+'</b></div></div>'+
+      '<p style="font-size:11px;color:#857C74;line-height:1.45;margin:18px 0 0">Execução por [PSAV parceira] (autorização BCB nº ____). Pix recebido por [IP parceira]. Contrato de câmbio nº ____ anexo. Este comprovante não constitui parecer fiscal.</p>'+
+      '<div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px"><button class="btn ghost sm" onclick="document.getElementById(\'modal\').classList.remove(\'on\')">Fechar</button><button class="btn sm" onclick="toast(\'PDF gerado no servidor com template versionado.\')">Salvar PDF</button></div>';
+    var w=$('receipt').querySelector('[data-wm-r]'); w.innerHTML=WM;
+    $('modal').classList.add('on');
+  };
+  window.copyCode=function(){ var c=$('p-code').textContent; try{ navigator.clipboard.writeText(c).then(function(){toast('Código Pix copiado.')},function(){toast('Código Pix copiado.')}); }catch(e){ toast('Código Pix copiado.'); } };
+
+  // ---------- QR ilustrativo ----------
+  function drawQR(seed){
+    var N=25, s=0; for(var i=0;i<seed.length;i++) s=(s*31+seed.charCodeAt(i))>>>0;
+    function rnd(){ s=(s*1664525+1013904223)>>>0; return s/4294967296; }
+    var g=[]; for(var r=0;r<N;r++){g[r]=[];for(var c=0;c<N;c++)g[r][c]=rnd()<0.42?1:0;}
+    function finder(r,c){for(var i=0;i<7;i++)for(var j=0;j<7;j++)g[r+i][c+j]=(i===0||i===6||j===0||j===6||(i>=2&&i<=4&&j>=2&&j<=4))?1:0;}
+    finder(0,0);finder(0,N-7);finder(N-7,0);
+    for(var i=0;i<8;i++)for(var j=0;j<8;j++)if(i===7||j===7){g[i][j]=0;g[i][N-1-j]=0;g[N-1-i][j]=0;}
+    var out=''; for(var r=0;r<N;r++)for(var c=0;c<N;c++)if(g[r][c])out+='<rect class="qr" x="'+(c*8)+'" y="'+(r*8)+'" width="8" height="8"/>';
+    $('qr').innerHTML=out;
+  }
+
+  window.resetAll=function(){ stopTimer(); execTimers.forEach(clearTimeout); execTimers=[]; cur=null; quote=null; attached=false; seq=4182;
+    var a=$('f-att'); a.classList.remove('ok'); $('f-att-txt').textContent='Nenhum arquivo anexado'; $('f-att-txt').style.color='var(--muted)'; a.querySelector('button').textContent='Anexar PDF';
+    $('q-head-txt').textContent='Preencha os dados e peça a cotação.'; $('q-body').innerHTML='<div style="color:var(--muted);font-size:13px;line-height:1.5">Você vai ver o câmbio base, o spread do parceiro, a nossa taxa, o IOF e a tarifa de rede antes de confirmar. A cotação fica travada por 60 segundos.</div>';
+    $('b-quote').textContent='Pedir cotação'; $('b-quote').disabled=false; $('nps').innerHTML=''; renderOrders(); setSim(null); go('painel'); };
+
+  renderOrders(); setSim(null); go('painel');
+})();
+</script>
+
+</body>
+</html>
