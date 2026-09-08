@@ -198,6 +198,19 @@ th{font-family:"Gabarito",sans-serif;text-transform:uppercase;letter-spacing:.08
 .todo div{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;font-size:.95rem}
 .todo .box{width:18px;height:18px;border:1.5px solid var(--muted);border-radius:5px;margin-top:3px}
 
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:28px}
+.hz{border-top:3px solid var(--line);padding-top:14px;display:grid;gap:10px;align-content:start}
+.hz.now{border-top-color:var(--ruiva)}
+.hz .when{font-family:"Gabarito",sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:.72rem;font-weight:700;color:var(--muted)}
+.hz.now .when{color:var(--ruiva)}
+.hz h3{font-size:1.05rem;margin:0}
+.hz ul{margin:0;padding-left:18px;font-size:.93rem;color:var(--ink-2);display:grid;gap:6px}
+.hz .need{font-size:.85rem;color:var(--muted);margin:4px 0 0;padding-top:10px;border-top:1px dashed var(--line)}
+.hz .need b{color:var(--ink-2)}
+@media (max-width:820px){ .road{grid-template-columns:1fr 1fr} }
+@media (max-width:480px){ .road{grid-template-columns:1fr} }
+
 footer{padding:36px 0;color:var(--muted);font-size:.85rem}
 
 @media (max-width:820px){
@@ -220,11 +233,11 @@ footer{padding:36px 0;color:var(--muted);font-size:.85rem}
         <span class="wm" data-wm></span>
       </a>
       <div style="height:26px"></div>
-      <p class="eyebrow">Identidade de marca · v0.1</p>
+      <p class="eyebrow">Identidade de marca · v0.2</p>
       <h1 style="margin-top:8px">Esperto é ver o custo antes de pagar.</h1>
-      <p class="lead" style="margin-top:14px">Nome, mascote, posicionamento, voz e sistema visual da fintech de pagamento internacional para empresas descrita no briefing do MVP. Pronto para virar landing, produto, comprovante e material comercial.</p>
+      <p class="lead" style="margin-top:14px">Nome, mascote, posicionamento, voz, sistema visual e roadmap da fintech de pagamento internacional para empresas descrita no briefing do MVP. Pronto para virar landing, produto, comprovante e material comercial.</p>
       <div class="meta">
-        <span><b>Data</b> 7 set 2026</span>
+        <span><b>Data</b> 8 set 2026</span>
         <span><b>Status</b> proposta para decisão</span>
         <span><b>Pendências</b> INPI · domínio .com · jurídico</span>
       </div>
@@ -513,8 +526,70 @@ footer{padding:36px 0;color:var(--muted);font-size:.85rem}
   </div>
 </section>
 
+<section id="futuro">
+  <p class="eyebrow">7 · Onde isso vai</p>
+  <h2>Primeiro o pagamento. O resto vem quando o pagamento pagar por ele.</h2>
+  <p class="lead">A FoxyPay nasce como a forma mais barata e documentada de pagar um fornecedor lá fora. É isso que vendemos hoje, e é só isso que a marca promete hoje. Cada produto seguinte usa a mesma peça: o cliente já paga em reais, já cadastrou o fornecedor, já confia no comprovante. A ordem abaixo é deliberada: gerar receita e credibilidade com baixo capital antes de assumir risco de crédito, risco cambial e custo regulatório.</p>
+
+  <div class="road">
+    <div class="hz now">
+      <span class="when">Agora · 2026</span>
+      <h3>Pagar o fornecedor</h3>
+      <ul>
+        <li>Pagamento internacional via stablecoin, executado por parceiro autorizado. Capital próprio quase zero: a liquidez em USDC e o câmbio são do parceiro.</li>
+        <li>Cotação travada por 60 segundos, custo aberto linha por linha, Pix no valor exato.</li>
+        <li>Painel de fornecedores, comprovante, contrato de câmbio, extrato mensal para o contador.</li>
+        <li>API para o cliente que quer integrar ao ERP.</li>
+      </ul>
+      <p class="need"><b>Exige:</b> parceiro PSAV, KYB, compliance. Nenhuma licença própria.</p>
+    </div>
+
+    <div class="hz">
+      <span class="when">Em seguida</span>
+      <h3>Travar o câmbio por mais tempo</h3>
+      <ul>
+        <li>Câmbio travado por prazo (dias ou semanas, não 60 segundos), com hedge contratado junto a banco parceiro e o custo da proteção absorvido no spread.</li>
+        <li>Reserva de cotação: o cliente segura um preço pagando uma taxa de reserva.</li>
+        <li>Parcelamento em reais: a FoxyPay paga o fornecedor à vista e o cliente paga em parcelas. O câmbio fecha na compra, então não há risco cambial; o funding vem de banco ou FIDC.</li>
+      </ul>
+      <p class="need"><b>Exige:</b> banco parceiro para hedge, linha de funding, histórico de operações para precificar.</p>
+    </div>
+
+    <div class="hz">
+      <span class="when">Depois</span>
+      <h3>Financiar a importação</h3>
+      <ul>
+        <li>Linha de crédito para importação: a FoxyPay origina, a captação vem de banco ou fundo, o repasse leva uma margem pequena. Somos originadora, não balanço.</li>
+        <li>Hedge inteligente: regras por prazo, valor e exposição acumulada decidem quando proteger, em vez de proteger tudo.</li>
+        <li>Pool de liquidez: compensar operações entre clientes para reduzir o custo de proteção e de conversão.</li>
+      </ul>
+      <p class="need"><b>Exige:</b> volume, dados de inadimplência, estrutura de crédito (FIDC ou SCD parceira), política de risco.</p>
+    </div>
+
+    <div class="hz">
+      <span class="when">Um dia</span>
+      <h3>A tesouraria do importador</h3>
+      <ul>
+        <li>Conta global empresarial: com parceiros no início, própria só se fizer sentido econômico e regulatório.</li>
+        <li>Gestão de fornecedores como software (SaaS): cadastro, documentos, histórico e prazos, mesmo para quem ainda não paga pela FoxyPay.</li>
+        <li>IA para tesouraria: sugere quando converter, quando usar USDC, quando travar e quando esperar, a partir do fluxo do próprio cliente.</li>
+      </ul>
+      <p class="need"><b>Exige:</b> base de clientes, dados de fluxo de caixa, possivelmente licença própria.</p>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:28px">
+    <div class="callout">
+      <p><b>O que a marca promete hoje.</b> Só o que está na coluna "Agora". "Cotação travada" significa 60 segundos com contador na tela, e continua significando isso até o produto de câmbio por prazo existir, com nome próprio. Nada de "crédito", "conta global" ou "tesouraria" em landing, comercial ou comprovante antes de o produto estar no ar.</p>
+    </div>
+    <div class="callout warn">
+      <p><b>O que não muda ao longo do caminho.</b> Custo aberto antes de confirmar, o número sempre maior que a piada, e o nome de quem executa escrito em toda tela com dinheiro. Cada novo produto entra nesse contrato, nunca em um novo.</p>
+    </div>
+  </div>
+</section>
+
 <section id="proximos">
-  <p class="eyebrow">7 · Antes de usar o nome em público</p>
+  <p class="eyebrow">8 · Antes de usar o nome em público</p>
   <h2>Quatro verificações.</h2>
   <div class="todo">
     <div><span class="box"></span><span><b>Domínio hoje.</b> Registrar <code>foxypay.com.br</code> no Registro.br agora, antes de qualquer divulgação. Tentar <code>foxypay.app</code> e reservar os handles.</span></div>
@@ -525,7 +600,7 @@ footer{padding:36px 0;color:var(--muted);font-size:.85rem}
 </section>
 
 </main>
-<footer class="wrap">FoxyPay · Identidade de marca v0.1 · 7 set 2026 · Documento de proposta; nomes de parceiros, números de autorização e valores são placeholders ou exemplos ilustrativos.</footer>
+<footer class="wrap">FoxyPay · Identidade de marca v0.2 · 8 set 2026 · Documento de proposta; nomes de parceiros, números de autorização e valores são placeholders ou exemplos ilustrativos.</footer>
 
 <script>
 (function(){
