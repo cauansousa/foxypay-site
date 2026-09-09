@@ -3,12 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FoxyPay</title>
+<title>FoxyPay · Pague seu fornecedor lá fora do jeito esperto</title>
 <meta name="description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela e comprovante com contrato de câmbio.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<meta property="og:title" content="FoxyPay">
+<link rel="canonical" href="https://foxypay.com.br/">
+<meta name="theme-color" content="#F6F4F1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14110F" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://foxypay.com.br/">
+<meta property="og:site_name" content="FoxyPay">
+<meta property="og:title" content="FoxyPay · Esperto é ver o custo antes de pagar">
 <meta property="og:description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela e comprovante com contrato de câmbio.">
-<style>[hidden]{display:none!important}</style>
+<meta property="og:locale" content="pt_BR">
+<meta name="twitter:card" content="summary">
+<script>
+  // Endereço da API pública (cotação ao vivo). Enquanto não existir, o simulador usa o câmbio de mercado e as taxas de referência.
+  window.FOXYPAY = { api: "https://api.foxypay.com.br/api/v1", fx: "https://economia.awesomeapi.com.br/last/USD-BRL" };
+</script>
+<style>[hidden]{display:none!important}
+.sim .src{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:2px 0 6px}
+.sim .src i{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.sim .src.live i{background:var(--musgo);box-shadow:0 0 0 3px rgba(47,107,79,.18)}
+.sim .src.market i{background:var(--mel)}
+.sim .src.busy i{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.sim .src.busy i{animation:none}}
+footer .soon{color:var(--muted);font-size:.85rem}
+</style>
 </head>
 <body>
 
@@ -260,13 +281,14 @@ footer ul a{color:var(--ink-2);text-decoration:none}
           <button class="chip" data-v="10000">USD 10.000</button>
           <button class="chip" data-v="25000">USD 25.000</button>
         </div>
+        <div class="src" id="o-src" role="status" aria-live="polite"><i></i><span>Câmbio de referência</span></div>
         <div class="qrow"><span class="k">Câmbio base</span><span class="v num" id="o-rate">5,42000000</span></div>
         <div class="qrow"><span class="k">Spread do parceiro (<span id="o-spr-p">0,35%</span>)</span><span class="v num" id="o-spr">R$ 189,70</span></div>
         <div class="qrow"><span class="k">Taxa FoxyPay (<span id="o-tk-p">0,60%</span>)</span><span class="v num" id="o-tk">R$ 325,20</span></div>
         <div class="qrow"><span class="k">IOF (0,38%)</span><span class="v num" id="o-iof">R$ 205,96</span></div>
         <div class="qrow"><span class="k" id="o-net-k">Tarifa de rede</span><span class="v num" id="o-net">R$ 5,42</span></div>
         <div class="qrow total"><span class="k">Você paga via Pix</span><span class="v num" id="o-total">R$ 54.926,28</span></div>
-        <div class="bank">No banco, este pagamento custaria cerca de <b id="o-bank">R$ 56.181,96</b>. Com a FoxyPay você paga <b id="o-save">R$ 1.255,68 a menos</b>.<small>Comparação ilustrativa: spread bancário médio de 3% mais tarifa de R$ 150. Câmbio de referência de hoje; a cotação real é travada na hora do pagamento. Não é uma cotação de banco.</small></div>
+        <div class="bank">No banco, este pagamento custaria cerca de <b id="o-bank">R$ 56.181,96</b>. Com a FoxyPay você paga <b id="o-save">R$ 1.255,68 a menos</b>.<small>Comparação ilustrativa: spread bancário médio de 3% mais tarifa de R$ 150. <span id="o-bank-note">Câmbio de referência; a cotação real é travada na hora do pagamento.</span> Não é uma cotação de banco.</small></div>
         <a class="btn" href="#piloto">Criar conta para pagar</a>
         <p class="legal">A conversão e o envio são executados por parceiro autorizado pelo Banco Central do Brasil (PSAV). O Pix é recebido na conta de instituição de pagamento autorizada. A FoxyPay não custodia valores nem realiza câmbio.</p>
       </div>
@@ -440,8 +462,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
       <li><a href="#faq">Perguntas frequentes</a></li>
       <li><a href="app/">Demonstração do painel</a></li>
       <li><a href="marca/">Identidade de marca</a></li>
-      <li><a href="#">Termos de uso</a></li>
-      <li><a href="#">Política de privacidade</a></li>
+      <li><span class="soon">Termos de uso e política de privacidade: publicados junto com a abertura das contas</span></li>
       <li><a href="mailto:oi@foxypay.com.br">oi@foxypay.com.br</a></li>
     </ul>
   </div>
@@ -461,30 +482,74 @@ footer ul a{color:var(--ink-2);text-decoration:none}
   function parseUsd(s){ s=String(s).replace(/[^\d,.]/g,''); if(s.indexOf(',')>-1){ s=s.replace(/\./g,'').replace(',','.'); } else if((s.match(/\./g)||[]).length>1){ s=s.replace(/\./g,''); } var n=parseFloat(s); return isNaN(n)?0:Math.round(n*100); }
   function fmtUsd(c){ return (c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function bp(x,b){ return Math.round(x*b/10000); }
-  function calc(){
-    var usd=parseUsd(document.getElementById('usd').value); if(usd<100){usd=100;}
-    var dest=document.getElementById('dest').value;
-    var base=Math.round(usd*P.rate/1e8);
-    var spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=bp(base,P.iofBp), net=P.net[dest];
-    var total=base+spr+tk+iof+net;
-    var bank=base+bp(base,P.bankSpreadBp)+P.bankFeeCents+iof;
-    var save=bank-total;
-    var $=function(id){return document.getElementById(id)};
-    $('o-rate').textContent=(P.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8,maximumFractionDigits:8});
-    $('o-spr-p').textContent=pct(P.spreadBp); $('o-spr').textContent=brl(spr);
-    $('o-tk-p').textContent=pct(tb); $('o-tk').textContent=brl(tk);
-    $('o-iof').textContent=brl(iof);
-    $('o-net-k').textContent=P.netLabel[dest]; $('o-net').textContent=brl(net);
-    $('o-total').textContent=brl(total);
-    $('o-bank').textContent=brl(bank);
-    $('o-save').textContent= save>0 ? brl(save)+' a menos' : brl(-save)+' a mais';
+  var $=function(id){return document.getElementById(id)};
+  // Fonte do câmbio, em cascata: API da FoxyPay (parceiro) → câmbio de mercado em tempo real → referência fixa.
+  var SRC={kind:'ref', at:null, rate:P.rate};
+  function hhmm(d){ return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+  function showSrc(busy){
+    var el=$('o-src'), note=$('o-bank-note');
+    el.className='src '+(SRC.kind==='partner'?'live':SRC.kind==='market'?'market':'')+(busy?' busy':'');
+    var when=SRC.at?' · '+hhmm(SRC.at):'';
+    el.querySelector('span').textContent= busy ? 'Atualizando cotação…'
+      : SRC.kind==='partner' ? 'Cotação ao vivo do parceiro'+when+' · atualiza a cada minuto'
+      : SRC.kind==='market' ? 'Câmbio USD/BRL de mercado ao vivo'+when+' · taxas de referência'
+      : 'Câmbio de referência · sem conexão com a fonte ao vivo';
+    if(note) note.textContent= SRC.kind==='partner' ? 'Cotação indicativa do parceiro; o valor é travado por 60 segundos na hora do pagamento.'
+      : SRC.kind==='market' ? 'Câmbio de mercado agora; a cotação real do parceiro é travada na hora do pagamento.'
+      : 'Câmbio de referência; a cotação real é travada na hora do pagamento.';
   }
-  var usdEl=document.getElementById('usd');
-  usdEl.addEventListener('input',calc);
-  usdEl.addEventListener('blur',function(){ var c=parseUsd(usdEl.value); if(c<100)c=100; usdEl.value=fmtUsd(c); calc(); });
-  document.getElementById('dest').addEventListener('change',calc);
-  var chips=document.querySelectorAll('.chip'); for(var j=0;j<chips.length;j++){ chips[j].addEventListener('click',function(e){ e.preventDefault(); usdEl.value=fmtUsd(parseInt(this.getAttribute('data-v'),10)*100); calc(); }); }
-  calc();
+  function render(r){
+    $('o-rate').textContent=(r.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8,maximumFractionDigits:8});
+    $('o-spr-p').textContent=pct(r.spreadBp); $('o-spr').textContent=brl(r.spr);
+    $('o-tk-p').textContent=pct(r.tb); $('o-tk').textContent=brl(r.tk);
+    $('o-iof').textContent=brl(r.iof);
+    $('o-net-k').textContent=r.netLabel; $('o-net').textContent=brl(r.net);
+    $('o-total').textContent=brl(r.total);
+    $('o-bank').textContent=brl(r.bank);
+    $('o-save').textContent= r.save>0 ? brl(r.save)+' a menos' : brl(-r.save)+' a mais';
+  }
+  function localQuote(usd,dest,rate){
+    var base=Math.round(usd*rate/1e8);
+    var spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=bp(base,P.iofBp), net=P.net[dest];
+    var total=base+spr+tk+iof+net, bank=base+bp(base,P.bankSpreadBp)+P.bankFeeCents+iof;
+    return {rate:rate, spreadBp:P.spreadBp, spr:spr, tb:tb, tk:tk, iof:iof, net:net, netLabel:P.netLabel[dest], total:total, bank:bank, save:bank-total};
+  }
+  function inputs(){ var usd=parseUsd($('usd').value); if(usd<100){usd=100;} return {usd:usd, dest:$('dest').value}; }
+  function calc(){ var i=inputs(); render(localQuote(i.usd,i.dest,SRC.rate)); showSrc(false); }
+  function withTimeout(p,ms){ return Promise.race([p, new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'))},ms); })]); }
+  var CFG=window.FOXYPAY||{};
+  function fromApi(i){
+    if(!CFG.api) return Promise.reject(new Error('sem api'));
+    return withTimeout(fetch(CFG.api+'/public/quote?usd='+i.usd+'&dest='+i.dest,{mode:'cors'}),2500).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); }).then(function(b){
+      var n=function(x){return parseInt(x,10)};
+      SRC={kind:'partner', at:new Date(b.at||Date.now()), rate:n(b.rateE8)};
+      render({rate:n(b.rateE8), spreadBp:b.partnerSpreadBp, spr:n(b.partnerSpreadCents), tb:b.takeRateBp, tk:n(b.takeRateCents), iof:n(b.iofCents), net:n(b.networkFeeCents), netLabel:b.networkLabel, total:n(b.totalCents), bank:n(b.bank.totalCents), save:n(b.bank.savingsCents)});
+    });
+  }
+  function fromMarket(i){
+    if(!CFG.fx) return Promise.reject(new Error('sem fx'));
+    return withTimeout(fetch(CFG.fx),3000).then(function(r){ return r.json(); }).then(function(j){
+      var q=j.USDBRL||{}; var ask=parseFloat(q.ask); if(!(ask>0)) throw new Error('fx inválido');
+      SRC={kind:'market', at:new Date(), rate:Math.round(ask*1e8)};
+      render(localQuote(i.usd,i.dest,SRC.rate));
+    });
+  }
+  var seq=0;
+  function refresh(){
+    var i=inputs(), my=++seq;
+    render(localQuote(i.usd,i.dest,SRC.rate)); showSrc(true);
+    fromApi(i).catch(function(){ return fromMarket(i); }).catch(function(){ SRC={kind:'ref', at:null, rate:P.rate}; render(localQuote(i.usd,i.dest,P.rate)); })
+      .then(function(){ if(my===seq) showSrc(false); });
+  }
+  var usdEl=$('usd'), timer=null;
+  function debounced(){ clearTimeout(timer); timer=setTimeout(refresh,400); calc(); }
+  usdEl.addEventListener('input',debounced);
+  usdEl.addEventListener('blur',function(){ var c=parseUsd(usdEl.value); if(c<100)c=100; usdEl.value=fmtUsd(c); refresh(); });
+  $('dest').addEventListener('change',refresh);
+  var chips=document.querySelectorAll('.chip'); for(var j=0;j<chips.length;j++){ chips[j].addEventListener('click',function(e){ e.preventDefault(); usdEl.value=fmtUsd(parseInt(this.getAttribute('data-v'),10)*100); refresh(); }); }
+  refresh();
+  setInterval(function(){ if(document.visibilityState==='visible') refresh(); },60000);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') refresh(); });
 
   // Formulário do piloto (demonstração: valida e confirma na tela, sem backend)
   var lf=document.getElementById('leadform'), form=lf.querySelector('form'), err=document.getElementById('f-err');
