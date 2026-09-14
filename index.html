@@ -18,7 +18,7 @@
 <meta name="twitter:card" content="summary">
 <script>
   // Endereço da API pública (cotação ao vivo). Enquanto não existir, o simulador usa o câmbio de mercado e as taxas de referência.
-  window.FOXYPAY = { api: "https://api.foxypay.com.br/api/v1", fx: "https://economia.awesomeapi.com.br/last/USD-BRL" };
+  window.FOXYPAY = { api: ["https://api.foxypay.com.br/api/v1", "https://3-138-82-54.sslip.io/api/v1"], fx: "https://economia.awesomeapi.com.br/last/USD-BRL" };
 </script>
 <style>[hidden]{display:none!important}
 .sim .src{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:2px 0 6px}
@@ -519,8 +519,10 @@ footer ul a{color:var(--ink-2);text-decoration:none}
   function withTimeout(p,ms){ return Promise.race([p, new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'))},ms); })]); }
   var CFG=window.FOXYPAY||{};
   function fromApi(i){
-    if(!CFG.api) return Promise.reject(new Error('sem api'));
-    return withTimeout(fetch(CFG.api+'/public/quote?usd='+i.usd+'&dest='+i.dest,{mode:'cors'}),2500).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); }).then(function(b){
+    var bases=[].concat(CFG.api||[]); if(!bases.length) return Promise.reject(new Error('sem api'));
+    // tenta cada host da API na ordem (domínio próprio primeiro; o nome sslip.io é o piloto na EC2 enquanto o DNS não aponta)
+    var tryAt=function(k){ if(k>=bases.length) return Promise.reject(new Error('api indisponível')); return withTimeout(fetch(bases[k]+'/public/quote?usd='+i.usd+'&dest='+i.dest,{mode:'cors'}),2500).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); }).catch(function(){ return tryAt(k+1); }); };
+    return tryAt(0).then(function(b){
       var n=function(x){return parseInt(x,10)};
       SRC={kind:'partner', at:new Date(b.at||Date.now()), rate:n(b.rateE8)};
       render({rate:n(b.rateE8), spreadBp:b.partnerSpreadBp, spr:n(b.partnerSpreadCents), tb:b.takeRateBp, tk:n(b.takeRateCents), iof:n(b.iofCents), net:n(b.networkFeeCents), netLabel:b.networkLabel, total:n(b.totalCents), bank:n(b.bank.totalCents), save:n(b.bank.savingsCents)});
