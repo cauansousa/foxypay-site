@@ -541,7 +541,8 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     $('o-tk-p').textContent=pct(r.tb); $('o-tk').textContent=brl(r.tk);
     $('o-iof-k').textContent=iofLabel(); $('o-iof').textContent= CT.iofMode==='pending' && !r.iof ? '—' : brl(r.iof);
     var cmp=document.getElementById('cmp-iof'); if(cmp) cmp.textContent= CT.iofMode==='bp38' ? '0,38%, recolhido e discriminado' : CT.iofMode==='none' ? 'não incide nesta modalidade' : 'conforme legislação vigente, exibido na cotação';
-    $('o-net-k').textContent=r.netLabel+' ('+pct(P.netBp)+')'; $('o-net').textContent=brl(r.net);
+    // com cotação do parceiro a tarifa é a real (pode ser zero); o percentual de referência só aparece no cálculo local
+    $('o-net-k').textContent= SRC.kind==='partner' ? r.netLabel : r.netLabel+' ('+pct(P.netBp)+')'; $('o-net').textContent=brl(r.net);
     $('o-total').textContent=brl(r.total);
     $('o-bank').textContent=brl(r.bank);
     $('o-save').textContent= r.save>0 ? brl(r.save)+' a menos' : brl(-r.save)+' a mais';
