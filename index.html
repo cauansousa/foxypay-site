@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FoxyPay · Pague seu fornecedor lá fora do jeito esperto</title>
-<meta name="description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela e comprovante com contrato de câmbio.">
+<meta name="description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada enquanto você paga o Pix e comprovante completo no fim.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="canonical" href="https://foxypay.com.br/">
 <meta name="theme-color" content="#F6F4F1" media="(prefers-color-scheme: light)">
@@ -13,12 +13,19 @@
 <meta property="og:url" content="https://foxypay.com.br/">
 <meta property="og:site_name" content="FoxyPay">
 <meta property="og:title" content="FoxyPay · Esperto é ver o custo antes de pagar">
-<meta property="og:description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela e comprovante com contrato de câmbio.">
+<meta property="og:description" content="Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada enquanto você paga o Pix e comprovante completo no fim.">
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary">
 <script>
   // Endereço da API pública (cotação ao vivo). Enquanto não existir, o simulador usa o câmbio de mercado e as taxas de referência.
-  window.FOXYPAY = { api: ["https://api.foxypay.com.br/api/v1", "https://3-138-82-54.sslip.io/api/v1"], fx: "https://economia.awesomeapi.com.br/last/USD-BRL" };
+  window.FOXYPAY = {
+    api: ["https://api.foxypay.com.br/api/v1", "https://3-138-82-54.sslip.io/api/v1"],
+    fx: "https://economia.awesomeapi.com.br/last/USD-BRL",
+    // Parâmetros de preço do simulador (referência quando a API não responde). Em produção a cotação vem da API.
+    pricing: { refRateE8: 542000000, spreadBp: 15, spreadBankExtraBp: 15, takeBp: 60, netBp: 5, netAchUsdCents: 75, netFedwireUsdCents: 1700, bankSpreadBp: 400, bankFeeCents: 15000, iofBp: 38 },
+    // Conteúdo que depende de parecer: iofMode = "pending" | "none" | "bp38"; fxNoteFinal e legalFinal viram true com o texto aprovado; guiaContabilUrl quando o guia existir
+    content: { iofMode: "pending", fxNoteFinal: false, legalFinal: false, guiaContabilUrl: null }
+  };
 </script>
 <style>[hidden]{display:none!important}
 .sim .src{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:2px 0 6px}
@@ -29,6 +36,8 @@
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @media (prefers-reduced-motion:reduce){.sim .src.busy i{animation:none}}
 footer .soon{color:var(--muted);font-size:.85rem}
+.doclist li.fxnote i{background:var(--mel,#d99a2b);color:#14110f}
+.doclist li.fxnote span{color:var(--ink2,inherit)}
 </style>
 </head>
 <body>
@@ -255,7 +264,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     <div>
       <p class="eyebrow">Pagamento internacional para importadores</p>
       <h1 style="margin-top:10px">Esperto é ver o custo antes de pagar.</h1>
-      <p class="lead" style="margin-top:16px">Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada na tela por 60 segundos e comprovante com contrato de câmbio no fim. Você paga um Pix. O fornecedor recebe em minutos.</p>
+      <p class="lead" style="margin-top:16px">Pague seu fornecedor na China e nos EUA com custo total menor que o do banco, cotação travada enquanto você paga o Pix e comprovante completo no fim. O fornecedor recebe em minutos na carteira dele, ou em 1 a 2 dias na conta bancária em dólar.</p>
       <div class="cta">
         <a class="btn" href="https://app.foxypay.com.br/criar-conta">Pedir acesso ao beta</a>
         <a class="btn ghost" href="https://app.foxypay.com.br/login">Já tenho conta</a>
@@ -273,7 +282,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
           </div>
           <div class="field">
             <label for="dest">Destino</label>
-            <div class="inp"><select id="dest"><option value="cn">China · USDT</option><option value="us">EUA · USDC</option></select></div>
+            <div class="inp"><select id="dest"><option value="cn">China · carteira (USDT)</option><option value="us">EUA · carteira (USDC)</option></select></div>
           </div>
         </div>
         <div class="chips" id="usdhelp" aria-label="Valores rápidos">
@@ -283,14 +292,14 @@ footer ul a{color:var(--ink-2);text-decoration:none}
         </div>
         <div class="src" id="o-src" role="status" aria-live="polite"><i></i><span>Câmbio de referência</span></div>
         <div class="qrow"><span class="k">Câmbio base</span><span class="v num" id="o-rate">5,42000000</span></div>
-        <div class="qrow"><span class="k">Spread do parceiro (<span id="o-spr-p">0,35%</span>)</span><span class="v num" id="o-spr">R$ 189,70</span></div>
+        <div class="qrow"><span class="k">Spread do parceiro (<span id="o-spr-p">0,15%</span>)</span><span class="v num" id="o-spr">R$ 81,30</span></div>
         <div class="qrow"><span class="k">Taxa FoxyPay (<span id="o-tk-p">0,60%</span>)</span><span class="v num" id="o-tk">R$ 325,20</span></div>
-        <div class="qrow"><span class="k">IOF (0,38%)</span><span class="v num" id="o-iof">R$ 205,96</span></div>
-        <div class="qrow"><span class="k" id="o-net-k">Tarifa de rede</span><span class="v num" id="o-net">R$ 5,42</span></div>
-        <div class="qrow total"><span class="k">Você paga via Pix</span><span class="v num" id="o-total">R$ 54.926,28</span></div>
-        <div class="bank">No banco, este pagamento custaria cerca de <b id="o-bank">R$ 56.181,96</b>. Com a FoxyPay você paga <b id="o-save">R$ 1.255,68 a menos</b>.<small>Comparação ilustrativa: spread bancário médio de 3% mais tarifa de R$ 150. <span id="o-bank-note">Câmbio de referência; a cotação real é travada na hora do pagamento.</span> Não é uma cotação de banco.</small></div>
+        <div class="qrow"><span class="k" id="o-iof-k">IOF</span><span class="v num" id="o-iof">—</span></div>
+        <div class="qrow"><span class="k" id="o-net-k">Tarifa de rede (0,05%)</span><span class="v num" id="o-net">R$ 27,10</span></div>
+        <div class="qrow total"><span class="k">Você paga via Pix</span><span class="v num" id="o-total">R$ 54.633,60</span></div>
+        <div class="bank">No banco, este pagamento custaria cerca de <b id="o-bank">R$ 56.724,00</b>. Com a FoxyPay você paga <b id="o-save">R$ 2.090,40 a menos</b>.<small>Comparação ilustrativa: spread bancário de 4% (estimativa de mercado para remessa de PJ de pequeno porte) mais tarifa de R$ 150 e IOF de 0,38%. <span id="o-bank-note">Câmbio de referência; a cotação real é travada na hora do pagamento.</span> Não é uma cotação de banco.</small></div>
         <a class="btn" href="https://app.foxypay.com.br/criar-conta">Pedir acesso para pagar</a>
-        <p class="legal">A conversão e o envio são executados por parceiro autorizado pelo Banco Central do Brasil (PSAV). O Pix é recebido na conta de instituição de pagamento autorizada. A FoxyPay não custodia valores nem realiza câmbio.</p>
+        <p class="legal">A conversão e o envio são executados por prestador de serviços de ativos virtuais autorizado pelo Banco Central do Brasil. O Pix é recebido na conta de instituição de pagamento autorizada. A FoxyPay não recebe, custodia nem converte recursos dos clientes.</p>
       </div>
     </div>
   </div>
@@ -300,7 +309,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
   <div class="wrap">
     <div><i></i><span>Execução por PSAV autorizado pelo Banco Central</span></div>
     <div><i></i><span>Pix recebido em conta de IP autorizada, nunca na nossa</span></div>
-    <div><i></i><span>Contrato de câmbio e comprovante em todo pagamento</span></div>
+    <div><i></i><span>Comprovante completo em todo pagamento, registrado pelo parceiro autorizado</span></div>
     <div><i></i><span>Conta só para PJ, com 2FA obrigatório</span></div>
   </div>
 </div>
@@ -313,10 +322,10 @@ footer ul a{color:var(--ink-2);text-decoration:none}
       <p>Sem contato humano do cadastro ao comprovante. Se algo sair da rota, nossa equipe entra antes de você precisar pedir.</p>
     </div>
     <div class="steps">
-      <div class="step"><div class="n">1</div><h3>Cadastre a empresa</h3><p>CNPJ, sócios e documentos. A verificação é feita pelo parceiro regulado e você recebe limites iniciais de R$ 150 mil por pagamento.</p><span class="t">até 1 dia útil</span></div>
-      <div class="step"><div class="n">2</div><h3>Cadastre o fornecedor</h3><p>Carteira de stablecoin ou conta bancária no exterior, com os dados da empresa dele. Passa por checagem antes do primeiro envio.</p><span class="t">minutos</span></div>
-      <div class="step"><div class="n">3</div><h3>Cote e trave</h3><p>Anexe a invoice, veja o custo total linha por linha e trave a cotação por 60 segundos. O valor do Pix é o valor final.</p><span class="t">60 s</span></div>
-      <div class="step"><div class="n">4</div><h3>Pague o Pix</h3><p>O parceiro converte e envia. Você acompanha em tempo real e baixa comprovante e contrato de câmbio quando chegar.</p><span class="t">4 a 20 min típicos</span></div>
+      <div class="step"><div class="n">1</div><h3>Cadastre a empresa</h3><p>CNPJ, sócios e documentos. A verificação é feita pelo parceiro regulado. Limites iniciais: US$ 50 mil por pagamento e US$ 100 mil por mês; acima disso, envie os documentos financeiros já no cadastro.</p><span class="t">até 1 dia útil</span></div>
+      <div class="step"><div class="n">2</div><h3>Cadastre o fornecedor</h3><p>China: carteira do fornecedor (USDT na Tron ou Polygon). EUA: carteira (USDC na Polygon ou Base) ou conta bancária em dólar (ACH ou Fedwire). Alibaba, Payoneer e afins: wire em dólar. Conta em yuan não está disponível. Tudo com os dados da empresa dele e checagem antes do primeiro envio.</p><span class="t">minutos</span></div>
+      <div class="step"><div class="n">3</div><h3>Cote e trave</h3><p>Anexe a invoice, veja o custo total linha por linha e trave a cotação. O prazo para pagar o Pix aparece na tela no momento da cotação; o valor do Pix é o valor final.</p><span class="t">prazo na tela</span></div>
+      <div class="step"><div class="n">4</div><h3>Pague o Pix</h3><p>O parceiro converte e envia. Você acompanha em tempo real e baixa o comprovante quando chegar.</p><span class="t">minutos na carteira · 1 a 2 dias em conta</span></div>
     </div>
   </div>
 </section>
@@ -326,21 +335,23 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     <div class="sechead">
       <p class="eyebrow">Custos</p>
       <h2>Tudo aberto antes de você confirmar.</h2>
-      <p>Câmbio base, spread do parceiro, nossa taxa, IOF e tarifa de rede. Cinco linhas, sem "a partir de", sem surpresa no extrato.</p>
+      <p>Câmbio base, spread do parceiro, nossa taxa, tarifa de rede e IOF. Cinco linhas, sem "a partir de", sem surpresa no extrato. Num pagamento de R$ 100 mil, o custo fica entre R$ 800 e R$ 950 conforme o destino, sem contar IOF.</p>
     </div>
     <div class="cmp">
       <table>
-        <tr><th>Num pagamento de USD 10.000</th><th>Banco</th><th>Intermediário informal</th><th class="fx">FoxyPay</th></tr>
-        <tr><td>Spread sobre o câmbio</td><td>2% a 4%</td><td>1% a 2%, sem saber ao certo</td><td class="fx">0,35% do parceiro + 0,60% nossa, na tela</td></tr>
-        <tr><td>Tarifa fixa</td><td>R$ 100 a R$ 300</td><td>varia</td><td class="fx">R$ 0. Só a tarifa de rede, centavos</td></tr>
-        <tr><td>IOF</td><td>0,38%</td><td class="no">geralmente não recolhido</td><td class="fx">0,38%, recolhido e discriminado</td></tr>
-        <tr><td>Prazo até o fornecedor</td><td>2 a 5 dias úteis</td><td>horas</td><td class="fx">minutos a horas</td></tr>
-        <tr><td>Contrato de câmbio</td><td class="yes">sim</td><td class="no">não</td><td class="yes">sim, emitido pelo parceiro</td></tr>
-        <tr><td>Comprovante que o contador aceita</td><td class="yes">sim</td><td class="no">não</td><td class="yes">sim, em PDF, com hash ou referência bancária</td></tr>
-        <tr><td>Custo total estimado</td><td class="num mono">≈ R$ 56.180</td><td class="num mono">≈ R$ 55.000, sem papel</td><td class="fx num mono">R$ 54.926,28</td></tr>
+        <tr><th>Num pagamento de USD 10.000</th><th>Banco</th><th>Comprar USDT por conta própria</th><th class="fx">FoxyPay</th></tr>
+        <tr><td>Câmbio base</td><td>taxa do banco</td><td>mid-market da exchange</td><td class="fx">mid-market, sem taxa</td></tr>
+        <tr><td>Spread sobre o câmbio</td><td>4%, estimativa de mercado</td><td>0,1% a 0,5%, mais taxa de saque</td><td class="fx">0,15% a 0,30% do parceiro conforme destino, na tela</td></tr>
+        <tr><td>Taxa do serviço</td><td>R$ 100 a R$ 300 por operação</td><td>varia por exchange</td><td class="fx">0,60% nossa, cai com volume</td></tr>
+        <tr><td>Tarifa de rede</td><td>—</td><td>por sua conta</td><td class="fx">0,05% na carteira · US$ 0,75 (ACH) · US$ 17 (Fedwire)</td></tr>
+        <tr><td>IOF</td><td>0,38%</td><td class="no">por sua conta, se devido</td><td class="fx" id="cmp-iof">conforme legislação vigente, exibido na cotação</td></tr>
+        <tr><td>Prazo até o fornecedor</td><td>2 a 5 dias úteis</td><td>minutos, você mesmo envia</td><td class="fx">minutos na carteira · 1 a 2 dias (ACH) ou mesmo dia (Fedwire) em conta</td></tr>
+        <tr><td>Sai do CNPJ, com fornecedor cadastrado e invoice vinculada</td><td class="yes">sim</td><td class="no">não</td><td class="yes">sim</td></tr>
+        <tr><td>Comprovante que o contador aceita</td><td class="yes">sim</td><td class="no">não</td><td class="yes">sim, consolidado, com rastro completo</td></tr>
+        <tr><td>Custo total estimado</td><td class="num mono">≈ R$ 56.724</td><td class="num mono">≈ R$ 54.500, sem papel</td><td class="fx num mono">R$ 54.633,60</td></tr>
       </table>
     </div>
-    <p class="legal" style="margin-top:14px">Valores ilustrativos com câmbio de referência de 5,42. Nossa taxa varia por faixa de volume e cai a partir de USD 25 mil por mês. A tabela completa aparece no painel antes de cada pagamento.</p>
+    <p class="legal" style="margin-top:14px">Valores ilustrativos com câmbio de referência de 5,42, sem IOF. Método da estimativa do banco: spread médio praticado em remessas de pessoa jurídica de pequeno porte (2% a 4%; usamos 4%) mais tarifa fixa típica. A coluna "por conta própria" descreve quem compra USDT numa exchange e envia sozinho: o custo é parecido; o que muda é sair do CNPJ, com fornecedor cadastrado, invoice vinculada e comprovante. Nossa taxa varia por faixa de volume e cai a partir de USD 25 mil por mês. A tabela completa aparece no painel antes de cada pagamento.</p>
   </div>
 </section>
 
@@ -352,8 +363,8 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     </div>
     <div class="who">
       <div><h3>Sellers de marketplace</h3><p>Shopee, Mercado Livre e Amazon. Reposição de estoque toda semana, fornecedor em Shenzhen ou Yiwu, e margem que não aguenta 3% de spread.</p></div>
-      <div><h3>Dropshipping</h3><p>Volume alto de pagamentos pequenos, tudo em USDT. Cadastre o fornecedor uma vez e pague em três cliques nas próximas.</p></div>
-      <div><h3>Indústria e distribuidor</h3><p>Insumo, peça e máquina. Invoice vinculada em cada pagamento, contrato de câmbio para o despachante e extrato mensal para o contador.</p></div>
+      <div><h3>Dropshipping</h3><p>Volume alto de pagamentos pequenos, direto na carteira do fornecedor. Cadastre o fornecedor uma vez e pague em três cliques nas próximas.</p></div>
+      <div><h3>Indústria e distribuidor</h3><p>Insumo, peça e máquina. Invoice vinculada em cada pagamento, comprovante consolidado para o despachante e extrato mensal para o contador.</p></div>
     </div>
   </div>
 </section>
@@ -365,8 +376,8 @@ footer ul a{color:var(--ink-2);text-decoration:none}
       <h2 style="margin-top:8px">Papel que o contador aceita.</h2>
       <p class="lead" style="margin:14px 0 22px">Todo pagamento gera um conjunto completo. Fica na sua central de documentos por cinco anos e sai em CSV ou XLSX quando o contador pedir.</p>
       <ul class="doclist">
-        <li><i>✓</i><span><b>Comprovante em PDF</b> com pagador, fornecedor, valores, câmbio efetivo, hash da transação ou referência bancária e o nome do parceiro regulado.</span></li>
-        <li><i>✓</i><span><b>Contrato de câmbio</b> emitido pelo parceiro, vinculado ao pedido.</span></li>
+        <li><i>✓</i><span><b>Comprovante de pagamento internacional</b>, com invoice vinculada, identificação do fornecedor, custo em cinco linhas e rastro completo da operação (Pix, conversão e entrega), emitido pela FoxyPay e registrado pelo parceiro autorizado.</span></li>
+        <li class="fxnote"><i>!</i><span id="fx-note-doc">Neste trilho o pagamento é feito por meio de ativo virtual referenciado em dólar (USDT/USDC) por um prestador autorizado pelo Banco Central. Não há contrato de câmbio bancário. Se a sua contabilidade exige contrato de câmbio, fale com a gente: estamos habilitando um segundo trilho com câmbio bancário.</span></li>
         <li><i>✓</i><span><b>Invoice ou proforma</b> anexada e guardada junto com o pagamento.</span></li>
         <li><i>✓</i><span><b>Extrato mensal</b> por empresa, com os dados que suas obrigações fiscais pedem. Não damos parecer fiscal, damos os dados.</span></li>
         <li><i>✓</i><span><b>Acesso de leitura para o contador</b>, sem poder de pagar.</span></li>
@@ -384,7 +395,22 @@ footer ul a{color:var(--ink-2);text-decoration:none}
         <div><span>Invoice</span><b class="mono">PI-HX-20260901-77</b></div>
         <div style="grid-column:1/-1"><span>Hash on-chain</span><b class="hash">7f3a9c1e4b2d8a6f0e5c3b9d1a7f2e8c4b6d0a3f9e1c7b5d2a8f4e6c0b3d9a1f</b></div>
       </div>
-      <p class="legal">Exemplo ilustrativo. Execução por parceiro PSAV autorizado. Contrato de câmbio anexo.</p>
+      <p class="legal">Exemplo ilustrativo. Execução por prestador autorizado pelo Banco Central; operação registrada pelo parceiro.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contador">
+  <div class="wrap">
+    <div class="sechead">
+      <p class="eyebrow">Para o seu contador</p>
+      <h2>O que chega na mesa dele, sem tradução.</h2>
+      <p>Mande esta seção para quem fecha o seu mês. Não damos parecer fiscal; damos os dados completos e o registro de quem executou.</p>
+    </div>
+    <div class="who">
+      <div><h3>O que ele recebe</h3><p>Comprovante consolidado por pagamento (PDF), invoice e proforma anexadas, extrato mensal por empresa em CSV ou XLSX e um acesso só de leitura no painel, sem poder de pagar.</p></div>
+      <div><h3>Como a operação é registrada</h3><p>Executada por prestador de serviços de ativos virtuais autorizado pelo Banco Central, com finalidade "pagamento de importação" vinculada à invoice. O reporte regulatório da operação é feito pelo parceiro; o Pix sai da conta da sua empresa.</p></div>
+      <div><h3>Guia contábil</h3><p id="guia-contabil">Estamos preparando, com contador e jurídico, um guia de registro contábil e fiscal desta modalidade. Enquanto não sai, sua equipe pode falar direto com a nossa: <a href="mailto:oi@foxypay.com.br">oi@foxypay.com.br</a>.</p></div>
     </div>
   </div>
 </section>
@@ -405,7 +431,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     </div>
     <div class="callout">
       <p class="eyebrow" style="margin-bottom:6px">Quem faz o quê</p>
-      <p>A FoxyPay é uma empresa de tecnologia. A custódia de ativos virtuais, a conversão e o envio ao exterior são realizados por <b>[PSAV parceira]</b>, prestadora de serviços de ativos virtuais autorizada pelo Banco Central do Brasil nos termos das Resoluções BCB 519, 520 e 521. Os pagamentos via Pix são recebidos na conta de <b>[IP parceira]</b>, instituição de pagamento autorizada. A FoxyPay não custodia valores, não realiza operações de câmbio e não movimenta recursos fora das contas dos parceiros.</p>
+      <p>A FoxyPay é uma empresa de tecnologia. A custódia de ativos virtuais, a conversão e o envio ao exterior são realizados por <b>Lumx Sociedade Prestadora de Serviços de Ativos Virtuais Ltda.</b>, prestadora de serviços de ativos virtuais autorizada pelo Banco Central do Brasil nos termos das Resoluções BCB 519, 520 e 521. Os pagamentos via Pix são recebidos na conta de <b id="ip-nome">instituição de pagamento autorizada, parceira da Lumx (nome divulgado na tela de pagamento)</b>. A FoxyPay não custodia valores, não realiza operações de câmbio e não movimenta recursos fora das contas dos parceiros.</p>
     </div>
   </div>
 </section>
@@ -417,9 +443,12 @@ footer ul a{color:var(--ink-2);text-decoration:none}
       <h2>O que todo mundo pergunta antes do primeiro pagamento.</h2>
     </div>
     <div class="faq">
-      <details open><summary>Meu fornecedor precisa aceitar stablecoin?</summary><p>Para China, a maioria dos fornecedores que vendem para o Brasil já aceita USDT na rede Tron. Se o seu não aceitar, cadastre a conta bancária dele e, quando o parceiro tiver liquidação em moeda local naquele país, o pagamento sai em fiat. Você vê a opção na hora de cadastrar.</p></details>
-      <details><summary>O que é "cotação travada"?</summary><p>Quando você confirma, a cotação fica fixa por 60 segundos e geramos um Pix com o valor exato. Se o Pix chega nesse tempo, esse é o custo, sem ajuste depois. Se não chega, a cotação expira e nada é cobrado.</p></details>
-      <details><summary>Quanto tempo leva?</summary><p>Do Pix recebido até o fornecedor ver o valor: tipicamente entre 4 e 20 minutos para stablecoin. Mostramos o tempo real medido no painel, não uma promessa.</p></details>
+      <details open><summary>Como o meu fornecedor recebe?</summary><p>Na China, na carteira dele: USDT na rede Tron ou Polygon, que é como a maioria dos fornecedores que vendem para o Brasil já recebe. Conta bancária em yuan não está disponível. Nos EUA, na carteira (USDC na Polygon ou Base) ou em conta bancária em dólar, por ACH (1 a 2 dias) ou Fedwire (mesmo dia). Plataformas como Alibaba e Payoneer recebem por wire em dólar. Você vê as opções na hora de cadastrar o fornecedor.</p></details>
+      <details><summary>O que é "cotação travada"?</summary><p>Quando você confirma, a cotação fica fixa e geramos um Pix com o valor exato. O prazo para pagar aparece na tela no momento da cotação. Se o Pix chega dentro dele, esse é o custo, sem ajuste depois. Se não chega, a cotação expira e nada é cobrado.</p></details>
+      <details><summary>Tem contrato de câmbio?</summary><p id="fx-note-faq">Neste trilho o pagamento é feito por meio de ativo virtual referenciado em dólar (USDT/USDC) por um prestador autorizado pelo Banco Central. Não há contrato de câmbio bancário. O que você recebe é o comprovante de pagamento internacional, com invoice vinculada, fornecedor identificado, custo em cinco linhas e rastro completo da operação, registrado pelo parceiro. Se a sua contabilidade exige contrato de câmbio, fale com a gente: estamos habilitando um segundo trilho com câmbio bancário.</p></details>
+      <details><summary>Já compro USDT por conta própria. O que muda?</summary><p>O custo é parecido. O que muda é o pagamento sair do CNPJ da sua empresa, com fornecedor cadastrado e checado, invoice vinculada e um comprovante que o contador aceita, tudo executado por um prestador autorizado. Você troca o "fiz por fora" por um registro completo.</p></details>
+      <details><summary>Quais são os limites?</summary><p>No cadastro padrão, US$ 50 mil por pagamento e US$ 100 mil por mês. Limites maiores são liberados com documentos financeiros no onboarding, em até 1 dia útil. Se você já sabe que vai passar disso, informe o volume no cadastro e envie os documentos junto.</p></details>
+      <details><summary>Quanto tempo leva?</summary><p>Do Pix recebido até o fornecedor ver o valor: minutos quando ele recebe na carteira. Em conta bancária nos EUA, 1 a 2 dias por ACH ou mesmo dia por Fedwire. Mostramos o tempo real medido no painel, não uma promessa.</p></details>
       <details><summary>Serve para pessoa física?</summary><p>Não. A FoxyPay é só para empresas com CNPJ ativo, e o pagamento precisa de invoice ou proforma e natureza da operação (mercadoria ou serviço).</p></details>
       <details><summary>Vocês são um banco ou uma exchange?</summary><p>Nenhum dos dois. Somos a tecnologia e a experiência. A execução regulada é do nosso parceiro autorizado pelo Banco Central, e o nome dele aparece em toda tela de pagamento e em todo comprovante.</p></details>
       <details><summary>E se der errado no meio?</summary><p>Se o envio não for executado, o valor volta para a conta de origem do Pix e nenhuma taxa é cobrada. Você recebe e-mail em cada mudança de status e a timeline do pedido mostra onde o dinheiro está.</p></details>
@@ -432,13 +461,17 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     <div>
       <p class="eyebrow" style="color:var(--mel)">Beta fechado</p>
       <h2 style="margin-top:8px">Estamos abrindo para cinco importadores.</h2>
-      <p style="font-size:1.08rem;max-width:50ch;margin-top:14px">Pagamentos reais de até R$ 50 mil, acompanhamento direto com a nossa equipe e nossa taxa a zero durante o piloto. Peça acesso pelo app ou deixe seu contato aqui: a gente libera em ordem de chegada.</p>
+      <p style="font-size:1.08rem;max-width:50ch;margin-top:14px">Pagamentos reais de até R$ 50 mil, acompanhamento direto com a nossa equipe e nossa taxa a zero durante o piloto. Custo do parceiro e tarifa de rede continuam, exibidos na cotação. Peça acesso pelo app ou deixe seu contato aqui: a gente libera em ordem de chegada.</p>
     </div>
     <div class="lead-form" id="leadform">
       <form novalidate>
         <div class="field"><label for="f-email">E-mail corporativo</label><div class="inp"><input id="f-email" type="email" placeholder="voce@suaempresa.com.br" autocomplete="email"></div></div>
         <div class="field"><label for="f-cnpj">CNPJ</label><div class="inp"><input id="f-cnpj" inputmode="numeric" placeholder="00.000.000/0001-00"></div></div>
-        <div class="field"><label for="f-vol">Quanto você paga fora por mês</label><div class="inp"><select id="f-vol"><option>Até USD 5 mil</option><option selected>USD 5 mil a 25 mil</option><option>USD 25 mil a 100 mil</option><option>Mais de USD 100 mil</option></select></div></div>
+        <div class="field"><label for="f-pays">Como você paga hoje</label><div class="inp"><select id="f-pays"><option value="">Escolha</option><option>Banco</option><option>Exchange, por conta própria</option><option>Agente ou intermediário</option><option>Ainda não pago fora</option></select></div></div>
+        <div class="field"><label for="f-sup">Seu fornecedor</label><div class="inp"><select id="f-sup"><option value="">Escolha</option><option>Aceita USDT</option><option>Tem conta em dólar</option><option>Os dois</option><option>Não sei</option></select></div></div>
+        <div class="field"><label for="f-n">Pagamentos por mês</label><div class="inp"><select id="f-n"><option value="">Escolha</option><option>1 a 2</option><option>3 a 5</option><option>6 a 15</option><option>Mais de 15</option></select></div></div>
+        <div class="field"><label for="f-avg">Valor médio por pagamento</label><div class="inp"><select id="f-avg"><option value="">Escolha</option><option>Até USD 2 mil</option><option>USD 2 mil a 10 mil</option><option>USD 10 mil a 50 mil</option><option>Mais de USD 50 mil</option></select></div></div>
+        <div class="field"><label for="f-acc">Contador</label><div class="inp"><select id="f-acc"><option value="">Escolha</option><option>Escritório externo</option><option>Interno</option><option>Ainda não tenho</option></select></div></div>
         <p class="err" id="f-err">Preencha um e-mail válido e um CNPJ com 14 dígitos.</p>
         <button class="btn" type="submit">Entrar na lista do beta</button>
         <p class="legal">Ao enviar, você concorda com a política de privacidade. Usamos os dados só para o contato do piloto.</p>
@@ -452,7 +485,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
   <div class="wrap">
     <div>
       <span class="wm" data-wm></span>
-      <p>FoxyPay Tecnologia Ltda. · CNPJ 00.000.000/0001-00 · São Paulo, SP. A FoxyPay é uma empresa de tecnologia e não é instituição financeira, instituição de pagamento ou prestadora de serviços de ativos virtuais. A execução é realizada por [PSAV parceira], autorização BCB nº ____, e o Pix é recebido por [IP parceira], autorização BCB nº ____. Simulações são ilustrativas e não constituem oferta. Não prestamos consultoria fiscal.</p>
+      <p>FoxyPay Tecnologia Ltda. · CNPJ 00.000.000/0001-00 · São Paulo, SP. A FoxyPay é uma empresa de tecnologia e não é instituição financeira, instituição de pagamento ou prestadora de serviços de ativos virtuais. A conversão e o envio ao exterior são realizados por Lumx Sociedade Prestadora de Serviços de Ativos Virtuais Ltda., prestadora autorizada pelo Banco Central do Brasil, e o Pix é recebido por instituição de pagamento autorizada, informada na tela de pagamento. A FoxyPay não recebe, custodia nem converte recursos dos clientes. Simulações são ilustrativas e não constituem oferta. Não prestamos consultoria fiscal.</p>
       <p>© 2026 FoxyPay</p>
     </div>
     <ul>
@@ -474,9 +507,13 @@ footer ul a{color:var(--ink-2);text-decoration:none}
   var els=document.querySelectorAll('[data-wm]'); for(var i=0;i<els.length;i++){ els[i].innerHTML=WM; els[i].setAttribute('aria-label','FoxyPay'); }
 
   // Simulador. Parâmetros de referência (em produção vêm de tabela versionada). Dinheiro em centavos.
-  var P={ rate:542000000 /* 5.42000000 x 1e8 */, spreadBp:35, iofBp:38, bankSpreadBp:300, bankFeeCents:15000,
-          net:{cn:542, us:1100, usb:2500}, netLabel:{cn:'Tarifa de rede (Tron)', us:'Tarifa de rede (Polygon)', usb:'Tarifa ACH'} };
-  function takeBp(usdCents){ if(usdCents>=5000000) return 40; if(usdCents>=2500000) return 50; return 60; }
+  var CFG=window.FOXYPAY||{}, PR=CFG.pricing||{}, CT=CFG.content||{};
+  // Parâmetros vêm de window.FOXYPAY.pricing (nada hardcoded aqui); a cotação de verdade vem da API.
+  var P={ rate:PR.refRateE8||542000000, spreadBp:PR.spreadBp||15, iofBp:PR.iofBp||38, bankSpreadBp:PR.bankSpreadBp||400, bankFeeCents:PR.bankFeeCents||15000, netBp:PR.netBp||5,
+          netLabel:{cn:'Tarifa de rede (Tron)', us:'Tarifa de rede (Polygon)'} };
+  var IOF_ON = CT.iofMode==='bp38';
+  function iofLabel(){ return CT.iofMode==='bp38' ? 'IOF (0,38%)' : CT.iofMode==='none' ? 'IOF (não incide nesta modalidade)' : 'IOF (conforme legislação vigente, exibido na cotação)'; }
+  function takeBp(usdCents){ var t=PR.takeBp||60; if(usdCents>=5000000) return Math.min(t,40); if(usdCents>=2500000) return Math.min(t,50); return t; }
   function brl(c){ return 'R$ '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
   function pct(bp){ return (bp/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'; }
   function parseUsd(s){ s=String(s).replace(/[^\d,.]/g,''); if(s.indexOf(',')>-1){ s=s.replace(/\./g,'').replace(',','.'); } else if((s.match(/\./g)||[]).length>1){ s=s.replace(/\./g,''); } var n=parseFloat(s); return isNaN(n)?0:Math.round(n*100); }
@@ -494,7 +531,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
       : SRC.kind==='partner' ? 'Cotação ao vivo do parceiro'+when+' · atualiza a cada minuto'
       : SRC.kind==='market' ? 'Câmbio USD/BRL de mercado ao vivo'+when+' · taxas de referência'
       : 'Câmbio de referência · sem conexão com a fonte ao vivo';
-    if(note) note.textContent= SRC.kind==='partner' ? 'Cotação indicativa do parceiro; o valor é travado por 60 segundos na hora do pagamento.'
+    if(note) note.textContent= SRC.kind==='partner' ? 'Cotação indicativa do parceiro; o valor é travado na hora do pagamento, pelo prazo mostrado na tela.'
       : SRC.kind==='market' ? 'Câmbio de mercado agora; a cotação real do parceiro é travada na hora do pagamento.'
       : 'Câmbio de referência; a cotação real é travada na hora do pagamento.';
   }
@@ -502,22 +539,24 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     $('o-rate').textContent=(r.rate/1e8).toLocaleString('pt-BR',{minimumFractionDigits:8,maximumFractionDigits:8});
     $('o-spr-p').textContent=pct(r.spreadBp); $('o-spr').textContent=brl(r.spr);
     $('o-tk-p').textContent=pct(r.tb); $('o-tk').textContent=brl(r.tk);
-    $('o-iof').textContent=brl(r.iof);
-    $('o-net-k').textContent=r.netLabel; $('o-net').textContent=brl(r.net);
+    $('o-iof-k').textContent=iofLabel(); $('o-iof').textContent= CT.iofMode==='pending' && !r.iof ? '—' : brl(r.iof);
+    var cmp=document.getElementById('cmp-iof'); if(cmp) cmp.textContent= CT.iofMode==='bp38' ? '0,38%, recolhido e discriminado' : CT.iofMode==='none' ? 'não incide nesta modalidade' : 'conforme legislação vigente, exibido na cotação';
+    $('o-net-k').textContent=r.netLabel+' ('+pct(P.netBp)+')'; $('o-net').textContent=brl(r.net);
     $('o-total').textContent=brl(r.total);
     $('o-bank').textContent=brl(r.bank);
     $('o-save').textContent= r.save>0 ? brl(r.save)+' a menos' : brl(-r.save)+' a mais';
   }
   function localQuote(usd,dest,rate){
     var base=Math.round(usd*rate/1e8);
-    var spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=bp(base,P.iofBp), net=P.net[dest];
-    var total=base+spr+tk+iof+net, bank=base+bp(base,P.bankSpreadBp)+P.bankFeeCents+iof;
+    var spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=IOF_ON?bp(base,P.iofBp):0, net=bp(base,P.netBp);
+    var total=base+spr+tk+iof+net, bank=bankCost(base);
     return {rate:rate, spreadBp:P.spreadBp, spr:spr, tb:tb, tk:tk, iof:iof, net:net, netLabel:P.netLabel[dest], total:total, bank:bank, save:bank-total};
   }
+  // banco: sempre calculado aqui com os parâmetros de referência (4% + R$ 150 + IOF), independente da fonte do câmbio
+  function bankCost(base){ return base+bp(base,P.bankSpreadBp)+P.bankFeeCents+bp(base,P.iofBp); }
   function inputs(){ var usd=parseUsd($('usd').value); if(usd<100){usd=100;} return {usd:usd, dest:$('dest').value}; }
   function calc(){ var i=inputs(); render(localQuote(i.usd,i.dest,SRC.rate)); showSrc(false); }
   function withTimeout(p,ms){ return Promise.race([p, new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'))},ms); })]); }
-  var CFG=window.FOXYPAY||{};
   function fromApi(i){
     var bases=[].concat(CFG.api||[]); if(!bases.length) return Promise.reject(new Error('sem api'));
     // tenta cada host da API na ordem (domínio próprio primeiro; o nome sslip.io é o piloto na EC2 enquanto o DNS não aponta)
@@ -525,7 +564,8 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     return tryAt(0).then(function(b){
       var n=function(x){return parseInt(x,10)};
       SRC={kind:'partner', at:new Date(b.at||Date.now()), rate:n(b.rateE8)};
-      render({rate:n(b.rateE8), spreadBp:b.partnerSpreadBp, spr:n(b.partnerSpreadCents), tb:b.takeRateBp, tk:n(b.takeRateCents), iof:n(b.iofCents), net:n(b.networkFeeCents), netLabel:b.networkLabel, total:n(b.totalCents), bank:n(b.bank.totalCents), save:n(b.bank.savingsCents)});
+      var bank=bankCost(n(b.baseCents));
+      render({rate:n(b.rateE8), spreadBp:b.partnerSpreadBp, spr:n(b.partnerSpreadCents), tb:b.takeRateBp, tk:n(b.takeRateCents), iof:n(b.iofCents), net:n(b.networkFeeCents), netLabel:b.networkLabel, total:n(b.totalCents), bank:bank, save:bank-n(b.totalCents)});
     });
   }
   function fromMarket(i){
@@ -549,6 +589,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
   usdEl.addEventListener('blur',function(){ var c=parseUsd(usdEl.value); if(c<100)c=100; usdEl.value=fmtUsd(c); refresh(); });
   $('dest').addEventListener('change',refresh);
   var chips=document.querySelectorAll('.chip'); for(var j=0;j<chips.length;j++){ chips[j].addEventListener('click',function(e){ e.preventDefault(); usdEl.value=fmtUsd(parseInt(this.getAttribute('data-v'),10)*100); refresh(); }); }
+  if(CT.guiaContabilUrl){ var g=document.getElementById('guia-contabil'); if(g) g.innerHTML='Guia de registro contábil e fiscal desta modalidade, escrito com contador e jurídico: <a href="'+CT.guiaContabilUrl+'">abrir o guia</a>.'; }
   refresh();
   setInterval(function(){ if(document.visibilityState==='visible') refresh(); },60000);
   document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') refresh(); });
@@ -569,10 +610,12 @@ footer ul a{color:var(--ink-2);text-decoration:none}
     var ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && cj.length===14;
     if(!ok){ err.style.display='block'; return; }
     err.style.display='none'; btn.disabled=true;
-    postLead([].concat(CFG.api||[]),0,{email:em,cnpj:cj}).then(function(){ lf.classList.add('sent'); }).catch(function(e){
+    var v=function(id){ var el=document.getElementById(id); return el&&el.value?el.value:undefined; };
+    var payload={email:em,cnpj:cj,answers:{paysHow:v('f-pays'),supplier:v('f-sup'),perMonth:v('f-n'),avgAmount:v('f-avg'),accountant:v('f-acc')}};
+    postLead([].concat(CFG.api||[]),0,payload).then(function(){ lf.classList.add('sent'); }).catch(function(e){
       btn.disabled=false;
       if(e&&e.fatal){ err.textContent='Confira o CNPJ: os dígitos verificadores não batem.'; err.style.display='block'; return; }
-      try{ localStorage.setItem('foxypay-lead',JSON.stringify({email:em,cnpj:cj,at:Date.now()})); }catch(_){ }
+      try{ localStorage.setItem('foxypay-lead',JSON.stringify({email:em,cnpj:cj,answers:payload.answers,at:Date.now()})); }catch(_){ }
       lf.classList.add('sent');
     });
   });
