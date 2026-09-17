@@ -273,7 +273,7 @@ footer ul a{color:var(--ink-2);text-decoration:none}
           </div>
           <div class="field">
             <label for="dest">Destino</label>
-            <div class="inp"><select id="dest"><option value="cn">China · USDT</option><option value="us">EUA · USDC</option><option value="usb">EUA · conta bancária (ACH)</option></select></div>
+            <div class="inp"><select id="dest"><option value="cn">China · USDT</option><option value="us">EUA · USDC</option></select></div>
           </div>
         </div>
         <div class="chips" id="usdhelp" aria-label="Valores rápidos">
@@ -555,12 +555,26 @@ footer ul a{color:var(--ink-2);text-decoration:none}
 
   // Formulário do piloto (demonstração: valida e confirma na tela, sem backend)
   var lf=document.getElementById('leadform'), form=lf.querySelector('form'), err=document.getElementById('f-err');
+  // envia para a API (lista de espera); se nenhum host responder, ainda confirma na tela e guarda localmente para não perder o contato
+  var btn=form.querySelector('button[type=submit]');
+  function postLead(bases,k,payload){
+    if(k>=bases.length) return Promise.reject(new Error('api indisponível'));
+    return withTimeout(fetch(bases[k]+'/public/leads',{method:'POST',mode:'cors',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}),4000)
+      .then(function(r){ if(r.status===400) throw {fatal:true}; if(!r.ok) throw new Error('http '+r.status); return true; })
+      .catch(function(e){ if(e&&e.fatal) throw e; return postLead(bases,k+1,payload); });
+  }
   form.addEventListener('submit',function(e){
     e.preventDefault();
     var em=document.getElementById('f-email').value.trim(), cj=document.getElementById('f-cnpj').value.replace(/\D/g,'');
     var ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) && cj.length===14;
     if(!ok){ err.style.display='block'; return; }
-    err.style.display='none'; lf.classList.add('sent');
+    err.style.display='none'; btn.disabled=true;
+    postLead([].concat(CFG.api||[]),0,{email:em,cnpj:cj}).then(function(){ lf.classList.add('sent'); }).catch(function(e){
+      btn.disabled=false;
+      if(e&&e.fatal){ err.textContent='Confira o CNPJ: os dígitos verificadores não batem.'; err.style.display='block'; return; }
+      try{ localStorage.setItem('foxypay-lead',JSON.stringify({email:em,cnpj:cj,at:Date.now()})); }catch(_){ }
+      lf.classList.add('sent');
+    });
   });
   form.addEventListener('input',function(){ err.style.display='none'; });
 })();
