@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FoxyPay · Verificar comprovante</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--ink:#14110f;--ink2:#5e5751;--muted:#8a8179;--paper:#f7f4ef;--card:#fff;--line:#d9d3cb;--accent:#e8622c;--good:#1f7a4d;--good-bg:#e3f2e8;--bad:#a12d2d;--bad-bg:#f8e4e4}
+*{box-sizing:border-box}body{margin:0;font-family:"Figtree",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--paper);color:var(--ink)}
+.wrap{max-width:640px;margin:0 auto;padding:40px 20px 60px}
+.wm{font-weight:800;font-size:26px;letter-spacing:-.02em}.wm b{color:var(--accent);font-weight:800}
+h1{font-size:22px;margin:22px 0 6px}p{line-height:1.5;color:var(--ink2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:18px}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.pill.ok{background:var(--good-bg);color:var(--good)}.pill.bad{background:var(--bad-bg);color:var(--bad)}
+.pill i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:8px 14px;font-size:14px;margin-top:14px}.kv span{color:var(--muted)}.kv b{font-weight:600;overflow-wrap:anywhere}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px}
+form{display:grid;gap:10px;margin-top:10px}label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;font-family:ui-monospace,monospace}
+button{background:var(--accent);color:#fff;border:0;border-radius:999px;padding:11px 18px;font-weight:700;cursor:pointer;font:inherit}
+.legal{font-size:12px;color:var(--muted);margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="wm">Fox<b>y</b>Pay</div>
+  <h1>Verificar comprovante</h1>
+  <p>Digite o número do comprovante e o hash do documento, os dois impressos no rodapé do PDF. A FoxyPay confere contra o registro original da operação.</p>
+  <div class="card">
+    <form id="f">
+      <div><label for="n">Nº do comprovante</label><input id="n" placeholder="FXP-2026-000127" autocomplete="off"></div>
+      <div><label for="h">Hash do documento (primeiros caracteres)</label><input id="h" placeholder="9f3a1c2b4d5e" autocomplete="off"></div>
+      <div><button type="submit">Verificar</button></div>
+    </form>
+  </div>
+  <div class="card" id="out" hidden></div>
+  <p class="legal">A verificação usa apenas o número e o hash. Nenhum dado além do que está no comprovante é exibido. Dúvidas: oi@foxypay.com.br.</p>
+</div>
+<script>
+(function(){
+  var API=["https://api.foxypay.com.br/api/v1","https://3-138-82-54.sslip.io/api/v1"];
+  var q=new URLSearchParams(location.search); var $=function(id){return document.getElementById(id)};
+  var m=location.pathname.match(/\/verificar\/(FXP-\d{4}-\d{6})/); if(m&&!q.get("n")) q.set("n",m[1]);
+  if(q.get("n")) $("n").value=q.get("n"); if(q.get("h")) $("h").value=q.get("h");
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+  function brl(c){return "R$ "+(parseInt(c,10)/100).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}
+  function usd(c){return "US$ "+(parseInt(c,10)/100).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})}
+  function dt(s){return s?new Date(s).toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo"}):"—"}
+  function show(html){var o=$("out");o.hidden=false;o.innerHTML=html}
+  function fetchAt(k,n,h){ if(k>=API.length) return Promise.reject(new Error("api")); return fetch(API[k]+"/public/verify?n="+encodeURIComponent(n)+"&h="+encodeURIComponent(h)).then(function(r){ if(!r.ok) throw new Error("http "+r.status); return r.json(); }).catch(function(){ return fetchAt(k+1,n,h); }); }
+  function run(){
+    var n=$("n").value.trim().toUpperCase(), h=$("h").value.trim().toLowerCase().replace(/[^0-9a-f]/g,"");
+    if(!/^FXP-\d{4}-\d{6}$/.test(n)||h.length<8){ show('<span class="pill bad"><i></i>Número ou hash em formato inválido</span>'); return; }
+    show("<p>Conferindo…</p>");
+    fetchAt(0,n,h).then(function(d){
+      if(!d.valid){ show('<span class="pill bad"><i></i>Não confere</span><p>Não encontramos um comprovante com este número e hash. Confira os caracteres impressos no rodapé do PDF. Se o documento foi alterado, o hash deixa de bater.</p>'); return; }
+      show('<span class="pill ok"><i></i>Comprovante autêntico</span>'+
+        '<div class="kv"><span>Número</span><b class="mono">'+esc(d.number)+'</b>'+
+        '<span>Situação</span><b>'+(d.state==="settled"?"Pago e entregue":esc(d.state))+'</b>'+
+        '<span>Liquidado em</span><b>'+dt(d.settledAt)+'</b>'+
+        '<span>Pagador</span><b>'+esc(d.payer.legalName)+' · CNPJ '+esc(d.payer.cnpjMasked)+'</b>'+
+        '<span>Beneficiário</span><b>'+esc(d.beneficiary.legalName)+' · '+esc(d.beneficiary.country)+' · '+esc(d.beneficiary.rail)+'</b>'+
+        '<span>Valor enviado</span><b>'+usd(d.usdCents)+'</b>'+
+        '<span>Total debitado</span><b>'+brl(d.totalCents)+'</b>'+
+        (d.txHash?'<span>Transação na rede</span><b class="mono">'+esc(d.txHash)+'</b>':'')+
+        '<span>Hash do documento</span><b class="mono">'+esc(d.contentHash)+'</b>'+
+        '<span>Emitido em</span><b>'+dt(d.issuedAt)+' · '+esc(d.templateVersion||"")+'</b></div>');
+    }).catch(function(){ show('<span class="pill bad"><i></i>Serviço indisponível</span><p>Não conseguimos consultar agora. Tente de novo em alguns minutos.</p>'); });
+  }
+  $("f").addEventListener("submit",function(e){e.preventDefault();run()});
+  if(q.get("n")&&q.get("h")) run();
+})();
+</script>
+</body>
+</html>
