@@ -17,13 +17,14 @@
 <meta property="og:locale" content="pt_BR">
 <meta name="twitter:card" content="summary">
 <script>
-  // Endereço da API pública (cotação ao vivo). Enquanto não existir, o simulador usa o câmbio de mercado e as taxas de referência.
+  // API pública: PTAX do dia e lista do beta. Sem resposta, o simulador usa o câmbio de mercado e, por último, ref_rate.
   window.FOXYPAY = {
     api: ["https://api.foxypay.com.br/api/v1", "https://3-138-82-54.sslip.io/api/v1"],
     fx: "https://economia.awesomeapi.com.br/last/USD-BRL",
     ptaxPath: "/public/ptax", // PTAX de venda do dia, buscada no nosso servidor (cache de 15 min)
-    // Parâmetros de preço do simulador (referência quando a API não responde). Em produção a cotação vem da API.
-    pricing: { refRateE8: 542000000, spreadBp: 15, spreadBankExtraBp: 15, takeBp: 60, netBp: 5, netAchUsdCents: 75, netFedwireUsdCents: 1700, netSwiftUsdCents: 3200, bankSpreadBp: 400, bankFeeCents: 15000, iofBp: 38 },
+    // Preço público (tabela versionada). Taxa FoxyPay única, já com conversão e rede do parceiro; a divisão interna não vai para o site.
+    // Câmbio base = PTAX de venda; ref_rate só vale se PTAX e mercado não responderem. Banco = estimativa de mercado.
+    pricing: { fee_table: 0.008, fee_beta: 0.004, usd_account_extra: 0.0015, ach_usd: 0.75, wire_usd: 17, ref_rate: 5.42, bank_spread: 0.04, bank_iof: 0.0038, bank_fee_brl: 150, iof: 0.0038 },
     // Conteúdo que depende de parecer: iofMode = "pending" | "none" | "bp38"; fxNoteFinal e legalFinal viram true com o texto aprovado; guiaContabilUrl quando o guia existir
     content: { iofMode: "pending", fxNoteFinal: false, legalFinal: false, guiaContabilUrl: null }
   };
@@ -141,6 +142,11 @@ nav.top .acts{display:flex;gap:8px;align-items:center}
 .inp input,.inp select{border:0;background:transparent;color:var(--ink);font:inherit;font-family:"IBM Plex Mono",monospace;font-size:1.1rem;width:100%;outline:none;font-variant-numeric:tabular-nums;min-width:0}
 .inp select{font-family:"Figtree",sans-serif;font-size:.95rem}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 12px}
+.seg{margin-left:auto;display:inline-flex;border:1px solid var(--line-2);border-radius:999px;padding:2px}
+.seg button{border:0;background:transparent;color:var(--muted);border-radius:999px;padding:3px 10px;font:inherit;font-size:.76rem;font-weight:600;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button:focus-visible{outline:2px solid var(--ruiva);outline-offset:1px}
+.fees dd small{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
 .chip{border:1px solid var(--line-2);background:transparent;color:var(--ink-2);border-radius:999px;padding:4px 11px;font:inherit;font-size:.8rem;cursor:pointer;font-family:"IBM Plex Mono",monospace}
 .chip:hover{border-color:var(--ink);color:var(--ink)}
 .qrow{display:flex;justify-content:space-between;gap:16px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.9rem;align-items:center}
@@ -151,7 +157,8 @@ nav.top .acts{display:flex;gap:8px;align-items:center}
 .qrow input:hover,.qrow input:focus{border-color:var(--line-2);background:var(--bg);outline:none}
 .qrow.total{border-bottom:0;padding-top:14px;align-items:baseline}
 .qrow.total .k{font-weight:700;color:var(--ink);font-size:.98rem}
-.qrow.total .v{font-weight:800;font-size:1.55rem;font-family:"Gabarito",sans-serif;letter-spacing:-.02em}
+.qrow.total .v{font-weight:800;font-size:1.55rem;font-family:"Gabarito",sans-serif;letter-spacing:-.02em;white-space:nowrap}
+@media (max-width:420px){.qrow.total .k{font-size:.9rem}.qrow.total .v{font-size:1.3rem}}
 .vet{margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--line)}
 .vet .row{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
 .vet .k{font-size:.85rem;color:var(--ink-2);display:flex;align-items:center;gap:6px}
@@ -380,7 +387,7 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;font-size:.88rem}
         <a class="btn ghost" href="#custos">Ver preços</a>
       </div>
       <dl class="facts">
-        <div><dt class="num">0,80%</dt><dd>custo típico sobre o câmbio</dd></div>
+        <div><dt class="num">0,8%</dt><dd>taxa única sobre a PTAX</dd></div>
         <div><dt class="num">R$ 0</dt><dd>de mensalidade</dd></div>
         <div><dt>Minutos</dt><dd>até a carteira do fornecedor</dd></div>
       </dl>
@@ -397,30 +404,30 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;font-size:.88rem}
             </div>
             <div class="field">
               <label for="dest">Destino</label>
-              <div class="inp"><select id="dest"><option value="cn">China · carteira (USDT)</option><option value="us">EUA · carteira (USDC)</option></select></div>
+              <div class="inp"><select id="dest"><option value="cn">China · carteira (USDT)</option><option value="us">EUA · carteira (USDC)</option><option value="ach">EUA · conta em dólar (ACH)</option><option value="wire">EUA · conta em dólar (Fedwire)</option></select></div>
             </div>
           </div>
           <div class="chips" id="usdhelp" aria-label="Valores rápidos">
             <button class="chip" data-v="2500">2.500</button>
             <button class="chip" data-v="10000">10.000</button>
             <button class="chip" data-v="25000">25.000</button>
+            <span class="seg" role="group" aria-label="Preço"><button type="button" id="o-plan-t" aria-pressed="true">Tabela 0,8%</button><button type="button" id="o-plan-b" aria-pressed="false">Beta 0,4%</button></span>
           </div>
-          <div class="qrow"><span class="k">Câmbio base<small id="o-rate-src">PTAX de venda · carregando…</small></span><input id="o-rate" inputmode="decimal" value="5,0441" aria-label="Câmbio base, editável"></div>
-          <div class="qrow"><span class="k">Spread do parceiro (<span id="o-spr-p">0,15%</span>)</span><span class="v num" id="o-spr">R$ 81,30</span></div>
-          <div class="qrow"><span class="k">Taxa FoxyPay (<span id="o-tk-p">0,60%</span>)</span><span class="v num" id="o-tk">R$ 325,20</span></div>
-          <div class="qrow"><span class="k" id="o-net-k">Tarifa de rede</span><span class="v num" id="o-net">R$ 27,10</span></div>
+          <div class="qrow"><span class="k">Câmbio base<small id="o-rate-src">PTAX de venda, sem taxa · carregando…</small></span><input id="o-rate" inputmode="decimal" value="5,4200" aria-label="Câmbio base, editável"></div>
+          <div class="qrow"><span class="k">Taxa FoxyPay (<span id="o-tk-p">0,8%</span>)<small>já inclui conversão e rede do parceiro</small></span><span class="v num" id="o-tk">R$ 433,60</span></div>
+          <div class="qrow"><span class="k" id="o-net-k">Tarifa de destino</span><span class="v num" id="o-net">incluída</span></div>
           <div class="qrow"><span class="k">IOF</span><span class="v num" id="o-iof">na cotação</span></div>
-          <div class="qrow total"><span class="k">Você paga via Pix</span><span class="v num" id="o-total">R$ 54.633,60</span></div>
+          <div class="qrow total"><span class="k">Total debitado via Pix</span><span class="v num" id="o-total">R$ 54.633,60</span></div>
           <div class="vet" id="vetbox">
             <div class="row"><span class="k">VET equivalente <button type="button" class="tip" id="vet-tip-btn" aria-expanded="false" aria-controls="vet-tip" aria-label="O que é VET equivalente">?</button></span><span class="v num" id="o-vet">R$ 5,4634</span></div>
             <p class="tipbox" id="vet-tip" hidden>Calculado como o VET da operação de câmbio, para você comparar direto. Neste trilho não há contrato de câmbio bancário; a execução é por prestador de serviços de ativos virtuais parceiro.</p>
-            <div class="row cmp"><span class="k" id="o-bank-k">Banco, estimativa</span><span class="v num" id="o-bank-vet">R$ 5,6518</span></div>
-            <div class="diff" id="o-diff">R$ 0,19 a menos por dólar · <span id="o-save">R$ 1.884</span> no total</div>
-            <label class="own"><span>Seu VET, do último contrato:</span><input id="o-own" inputmode="decimal" placeholder="5,6500"></label>
+            <div class="row cmp"><span class="k" id="o-bank-k">Banco, estimativa de mercado</span><span class="v num" id="o-bank-vet">R$ 5,6724</span></div>
+            <div class="diff" id="o-diff">R$ 0,21 a menos por dólar · <span id="o-save">R$ 2.100</span> no total</div>
+            <label class="own"><span>VET do seu banco (opcional):</span><input id="o-own" inputmode="decimal" placeholder="5,6500"></label>
           </div>
           <span id="o-bank" hidden></span>
           <a class="btn" href="https://app.foxypay.com.br/criar-conta">Pedir acesso para pagar</a>
-          <p class="legal">Banco estimado com spread de 4% e tarifa de R$ 150, sem IOF. Cotação travada na hora de pagar.</p>
+          <p class="legal">Banco: estimativa de mercado com spread de 4%, IOF de 0,38% e tarifa de R$ 150. Cotação travada enquanto você paga o Pix.</p>
         </div>
       </div>
     </div>
@@ -510,19 +517,19 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;font-size:.88rem}
     <div class="pricing">
       <div class="card fees" style="box-shadow:none">
         <dl>
-          <div><dt>Câmbio base</dt><dd>mid-market, sem margem</dd></div>
-          <div><dt>Spread do parceiro</dt><dd><span class="mono">0,15%</span> na carteira · <span class="mono">0,30%</span> em conta</dd></div>
-          <div><dt>Taxa FoxyPay</dt><dd><span class="mono">0,60%</span> por pagamento · <span class="mono">0,50%</span> acima de US$ 25 mil · <span class="mono">0,40%</span> acima de US$ 50 mil</dd></div>
-          <div><dt>Tarifa de rede</dt><dd><span class="mono">0,05%</span> na carteira · <span class="mono">US$ 0,75</span> ACH · <span class="mono">US$ 17</span> Fedwire · <span class="mono">US$ 32</span> SWIFT</dd></div>
-          <div><dt>IOF</dt><dd id="cmp-iof">conforme legislação, exibido na cotação</dd></div>
+          <div><dt>Câmbio base</dt><dd>dólar × PTAX de venda do Banco Central, sem taxa</dd></div>
+          <div><dt>Taxa FoxyPay</dt><dd><span class="mono">0,8%</span> · <span class="mono">0,4%</span> no beta, por 90 dias<small>já inclui conversão e rede do parceiro</small></dd></div>
+          <div><dt>Tarifa de destino</dt><dd>incluída na carteira (USDT ou USDC)<small>conta em dólar nos EUA: <span class="mono">0,15% + US$ 0,75</span> por ACH ou <span class="mono">0,15% + US$ 17</span> por Fedwire</small></dd></div>
+          <div><dt>IOF</dt><dd id="cmp-iof">conforme legislação vigente, exibido na cotação</dd></div>
+          <div><dt>Total debitado</dt><dd>a soma, com o VET equivalente logo abaixo</dd></div>
         </dl>
       </div>
       <div class="card cmpc" style="box-shadow:none">
-        <div class="top"><b>US$ 10.000 para a China</b><span>custo total, sem IOF</span></div>
-        <div class="brow"><div class="l"><b>Banco</b><span class="v">≈ R$ 2.318</span></div><div class="track"><i style="width:100%"></i></div><small><span>estimativa de mercado · 2 a 5 dias úteis</span><span>VET <span class="mono">5,6518</span></span></small></div>
-        <div class="brow fx"><div class="l"><b>FoxyPay</b><span class="v">R$ 433,60</span></div><div class="track"><i style="width:18.7%"></i></div><small><span>com CNPJ, invoice e comprovante · minutos</span><span>VET equivalente <span class="mono">5,4634</span></span></small></div>
-        <div class="brow"><div class="l"><b>Por conta própria</b><span class="v">≈ R$ 200</span></div><div class="track"><i style="width:8.6%"></i></div><small><span>sem CNPJ, sem invoice, sem comprovante</span><span>VET <span class="mono">5,4400</span></span></small></div>
-        <p class="legal" style="margin-top:14px">Câmbio de referência 5,42. Banco: spread de 4% e tarifa de R$ 150. VET equivalente = reais debitados ÷ dólares da invoice, tudo incluído.</p>
+        <div class="top"><b>R$ 100 mil para a carteira do fornecedor</b><span>custo além do câmbio base</span></div>
+        <div class="brow"><div class="l"><b>Banco</b><span class="v">≈ R$ 4.530</span></div><div class="track"><i style="width:100%"></i></div><small><span>estimativa de mercado · 2 a 5 dias úteis</span><span>VET <span class="mono">5,645</span></span></small></div>
+        <div class="brow fx"><div class="l"><b>FoxyPay</b><span class="v">R$ 800</span></div><div class="track"><i style="width:17.7%"></i></div><small><span>R$ 400 no beta · com comprovante · minutos</span><span>VET equivalente <span class="mono">5,443</span> · beta <span class="mono">5,422</span></span></small></div>
+        <div class="brow"><div class="l"><b>Por conta própria</b><span class="v">≈ R$ 370</span></div><div class="track"><i style="width:8.2%"></i></div><small><span>sem CNPJ, sem invoice, sem comprovante</span><span>VET <span class="mono">5,420</span></span></small></div>
+        <p class="legal" style="margin-top:14px">PTAX de exemplo 5,40. Banco: estimativa de mercado com spread de 4%, IOF de 0,38% e tarifa de R$ 150. FoxyPay sem IOF, que aparece na cotação. VET equivalente = reais debitados ÷ dólares da invoice. Prazos de banco e de conta própria variam.</p>
       </div>
     </div>
   </div>
@@ -599,8 +606,8 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;font-size:.88rem}
     <div class="card beta">
       <div class="l">
         <p class="eyebrow">Beta fechado</p>
-        <h2 style="margin-top:12px">Cinco importadores. Nossa taxa fica de fora.</h2>
-        <p>A taxa FoxyPay de 0,60% sai da conta durante o beta. Spread do parceiro e tarifa de rede continuam, na cotação.</p>
+        <h2 style="margin-top:12px">Cinco importadores. 0,4% por 90 dias.</h2>
+        <p>No beta a Taxa FoxyPay é 0,4% por 90 dias, depois 0,8%, já com a conversão e a rede do parceiro. Tarifa de destino (conta em dólar) e IOF aparecem na cotação.</p>
         <ul>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Pagamentos reais de até R$ 50 mil</li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Equipe acompanhando cada envio</li>
@@ -648,102 +655,84 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;font-size:.88rem}
   var WM='<span>Fox</span><svg class="yg" viewBox="0 0 62 70" aria-hidden="true"><path d="M8 22 L33 70"/><path d="M58 22 L20 92 C8 114 30 124 62 118 C92 112 118 106 136 100"/><circle cx="150" cy="95" r="7"/></svg><span>Pay</span>';
   var els=document.querySelectorAll('[data-wm]'); for(var i=0;i<els.length;i++){ els[i].innerHTML=WM; els[i].setAttribute('aria-label','FoxyPay'); }
 
-  // Simulador. Parâmetros de referência (em produção vêm de tabela versionada). Dinheiro em centavos.
+  // Simulador de custo. Taxa única da tabela pública; câmbio base pela PTAX de venda.
   var CFG=window.FOXYPAY||{}, PR=CFG.pricing||{}, CT=CFG.content||{};
-  // Parâmetros vêm de window.FOXYPAY.pricing (nada hardcoded aqui); a cotação de verdade vem da API.
-  var P={ rate:PR.refRateE8||542000000, spreadBp:PR.spreadBp||15, iofBp:PR.iofBp||38, bankSpreadBp:PR.bankSpreadBp||400, bankFeeCents:PR.bankFeeCents||15000, netBp:PR.netBp||5,
-          netLabel:{cn:'Tarifa de rede (Tron)', us:'Tarifa de rede (Polygon)'} };
-  var IOF_ON = CT.iofMode==='bp38';
-  function iofLabel(){ return CT.iofMode==='bp38' ? 'IOF (0,38%)' : CT.iofMode==='none' ? 'IOF (não incide nesta modalidade)' : 'IOF (conforme legislação vigente, exibido na cotação)'; }
-  function takeBp(usdCents){ var t=PR.takeBp||60; if(usdCents>=5000000) return Math.min(t,40); if(usdCents>=2500000) return Math.min(t,50); return t; }
+  // Tudo vem de window.FOXYPAY.pricing (nada de preço hardcoded aqui). Dinheiro em centavos, câmbio em E8.
+  var P={ feeTable:PR.fee_table, feeBeta:PR.fee_beta, acctExtra:PR.usd_account_extra, ach:PR.ach_usd, wire:PR.wire_usd,
+          ref:Math.round((PR.ref_rate||5.42)*1e8), bankSpread:PR.bank_spread, bankIof:PR.bank_iof, bankFee:Math.round((PR.bank_fee_brl||0)*100), iof:PR.iof };
+  var IOF_ON = CT.iofMode==='bp38', PLAN='table';
   function brl(c){ return 'R$ '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-  function pct(bp){ return (bp/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'; }
+  function pct(f){ return (f*100).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:2})+'%'; }
   function parseUsd(s){ s=String(s).replace(/[^\d,.]/g,''); if(s.indexOf(',')>-1){ s=s.replace(/\./g,'').replace(',','.'); } else if((s.match(/\./g)||[]).length>1){ s=s.replace(/\./g,''); } var n=parseFloat(s); return isNaN(n)?0:Math.round(n*100); }
   function fmtUsd(c){ return (c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
-  function bp(x,b){ return Math.round(x*b/10000); }
   var $=function(id){return document.getElementById(id)};
-  // Fonte do câmbio, em cascata: API da FoxyPay (parceiro) → câmbio de mercado em tempo real → referência fixa.
-  var SRC={kind:'ref', at:null, rate:P.rate};
-  var PTAX=null, OWN=null; // PTAX {rate, at}; OWN = câmbio digitado pelo usuário (sobrepõe a fonte ao vivo)
+  // Câmbio base, em cascata: digitado pelo cliente → PTAX de venda (nosso servidor, cache de 15 min) → mercado ao vivo → referência.
+  var PTAX=null, MKT=null, OWN=null;
+  function rateNow(){ return OWN || (PTAX&&PTAX.rate) || (MKT&&MKT.rate) || P.ref; }
   function hhmm(d){ return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
-  function showSrc(busy){
-    var ptx= PTAX ? ' · PTAX venda '+fmtRate4(PTAX.rate)+' ('+hhmm(PTAX.at)+')' : '';
-    var rs=$('o-rate-src'); if(rs) rs.textContent= busy ? 'atualizando…'
-      : OWN ? 'informado por você'+ptx
-      : SRC.kind==='partner' ? 'parceiro, ao vivo'+(SRC.at?' '+hhmm(SRC.at):'')+ptx
-      : SRC.kind==='market' ? 'mercado, ao vivo'+ptx
-      : PTAX ? 'PTAX de venda, boletim '+hhmm(PTAX.at) : 'câmbio de referência';
+  function showSrc(){
+    var rs=$('o-rate-src'); if(!rs) return;
+    rs.textContent= OWN ? 'informado por você'+(PTAX?' · PTAX venda '+fmtRate4(PTAX.rate):'')
+      : PTAX ? 'PTAX de venda, sem taxa · boletim '+hhmm(PTAX.at)
+      : MKT ? 'mercado ao vivo · PTAX indisponível'
+      : 'câmbio de referência';
   }
   function fmtRate4(e8){ return (e8/1e8).toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4}); }
   function parseRate(s){ s=String(s).replace(/[^\d,.]/g,'').replace(',','.'); var n=parseFloat(s); return (n>0.5&&n<50)?Math.round(n*1e8):0; }
+  function quote(usd,dest,rate){
+    var base=Math.round(usd*rate/1e8), fee=PLAN==='beta'?P.feeBeta:P.feeTable, tk=Math.round(base*fee);
+    var fixedUsd= dest==='ach'?P.ach : dest==='wire'?P.wire : 0;
+    var net= fixedUsd ? Math.round(base*P.acctExtra)+Math.round(fixedUsd*100*rate/1e8) : 0;
+    var iof=IOF_ON?Math.round(base*P.iof):0, total=base+tk+net+iof;
+    // banco: estimativa de mercado (spread + IOF + tarifa) sobre o mesmo câmbio base
+    var bank=base+Math.round(base*P.bankSpread)+Math.round(base*P.bankIof)+P.bankFee;
+    return {rate:rate, fee:fee, tk:tk, net:net, fixedUsd:fixedUsd, iof:iof, total:total, bank:bank};
+  }
   function render(r){
     var rateEl=$('o-rate'); if(document.activeElement!==rateEl) rateEl.value=fmtRate4(r.rate);
-    $('o-spr-p').textContent=pct(r.spreadBp); $('o-spr').textContent=brl(r.spr);
-    $('o-tk-p').textContent=pct(r.tb); $('o-tk').textContent=brl(r.tk);
+    $('o-tk-p').textContent=pct(r.fee); $('o-tk').textContent=brl(r.tk);
+    $('o-net-k').textContent= r.fixedUsd ? 'Tarifa de destino ('+pct(P.acctExtra)+' + US$ '+r.fixedUsd.toLocaleString('pt-BR',{maximumFractionDigits:2})+')' : 'Tarifa de destino';
+    $('o-net').textContent= r.fixedUsd ? brl(r.net) : 'incluída';
     $('o-iof').textContent= CT.iofMode==='pending' ? 'na cotação' : CT.iofMode==='none' ? 'não incide' : brl(r.iof);
-    var cmp=document.getElementById('cmp-iof'); if(cmp) cmp.textContent= CT.iofMode==='bp38' ? '0,38%, recolhido e discriminado' : CT.iofMode==='none' ? 'não incide nesta modalidade' : 'conforme legislação vigente, exibido na cotação';
-    // com cotação do parceiro a tarifa é a real (pode ser zero); o percentual de referência só aparece no cálculo local
-    $('o-net-k').textContent= SRC.kind==='partner' ? r.netLabel : r.netLabel+' ('+pct(P.netBp)+')'; $('o-net').textContent=brl(r.net);
+    var cmp=$('cmp-iof'); if(cmp) cmp.textContent= CT.iofMode==='bp38' ? '0,38%, recolhido e discriminado' : CT.iofMode==='none' ? 'não incide nesta modalidade' : 'conforme legislação vigente, exibido na cotação';
     $('o-total').textContent=brl(r.total);
-    // VET equivalente: total em reais ÷ dólares (tudo incluído), e o VET do banco no mesmo dólar (ou o informado pelo cliente)
-    var usd=inputs().usd, vet=r.total/usd, ownVet=parseRate($('o-own').value), bankVet= ownVet ? ownVet/1e8 : r.bank/usd, bankTotal= ownVet ? Math.round(usd*ownVet/1e8) : r.bank;
+    // VET equivalente: total em reais ÷ dólares; banco pela estimativa de mercado ou pelo VET que o cliente informar
+    var usd=inputs().usd/100, vet=r.total/100/usd, ownVet=parseRate($('o-own').value), bankVet= ownVet ? ownVet/1e8 : r.bank/100/usd, bankTotal= ownVet ? Math.round(usd*100*ownVet/1e8) : r.bank;
     $('o-vet').textContent='R$ '+vet.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4});
     $('o-bank-vet').textContent='R$ '+bankVet.toLocaleString('pt-BR',{minimumFractionDigits:4,maximumFractionDigits:4});
-    $('o-bank-k').textContent= ownVet ? 'Seu banco' : 'Banco, estimativa';
+    $('o-bank-k').textContent= ownVet ? 'Seu banco' : 'Banco, estimativa de mercado';
     $('o-bank').textContent=brl(bankTotal);
     var save=bankTotal-r.total, perUsd=Math.abs(bankVet-vet);
-    $('o-diff').innerHTML='R$ '+perUsd.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+(save>=0?' a menos':' a mais')+' por dólar · <span id="o-save">'+brl(Math.round(Math.abs(save)/100)*100).replace(',00','')+'</span> no total';
+    $('o-diff').innerHTML='R$ '+perUsd.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+(save>=0?' a menos':' a mais')+' por dólar · <span id="o-save">'+brl(Math.round(Math.abs(save)/10000)*10000).replace(',00','')+'</span> no total';
     $('o-diff').style.color= save>=0 ? 'var(--musgo)' : 'var(--crit)';
   }
-  function localQuote(usd,dest,rate){
-    var base=Math.round(usd*rate/1e8);
-    var spr=bp(base,P.spreadBp), tb=takeBp(usd), tk=bp(base,tb), iof=IOF_ON?bp(base,P.iofBp):0, net=bp(base,P.netBp);
-    var total=base+spr+tk+iof+net, bank=bankCost(base);
-    return {rate:rate, spreadBp:P.spreadBp, spr:spr, tb:tb, tk:tk, iof:iof, net:net, netLabel:P.netLabel[dest], total:total, bank:bank, save:bank-total};
-  }
-  // banco: sempre calculado aqui com os parâmetros de referência (4% + R$ 150 + IOF), independente da fonte do câmbio
-  function bankCost(base){ return base+bp(base,P.bankSpreadBp)+P.bankFeeCents+(IOF_ON?bp(base,P.iofBp):0); }
   function inputs(){ var usd=parseUsd($('usd').value); if(usd<100){usd=100;} return {usd:usd, dest:$('dest').value}; }
-  function calc(){ var i=inputs(); render(localQuote(i.usd,i.dest,SRC.rate)); showSrc(false); }
+  function calc(){ var i=inputs(); render(quote(i.usd,i.dest,rateNow())); showSrc(); }
+  function refresh(){ calc(); }
   function withTimeout(p,ms){ return Promise.race([p, new Promise(function(_,rej){ setTimeout(function(){rej(new Error('timeout'))},ms); })]); }
-  function fromApi(i){
-    var bases=[].concat(CFG.api||[]); if(!bases.length) return Promise.reject(new Error('sem api'));
-    // tenta cada host da API na ordem (domínio próprio primeiro; o nome sslip.io é o piloto na EC2 enquanto o DNS não aponta)
-    var tryAt=function(k){ if(k>=bases.length) return Promise.reject(new Error('api indisponível')); return withTimeout(fetch(bases[k]+'/public/quote?usd='+i.usd+'&dest='+i.dest,{mode:'cors'}),2500).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); }).catch(function(){ return tryAt(k+1); }); };
-    return tryAt(0).then(function(b){
-      var n=function(x){return parseInt(x,10)};
-      SRC={kind:'partner', at:new Date(b.at||Date.now()), rate:n(b.rateE8)};
-      var bank=bankCost(n(b.baseCents));
-      render({rate:n(b.rateE8), spreadBp:b.partnerSpreadBp, spr:n(b.partnerSpreadCents), tb:b.takeRateBp, tk:n(b.takeRateCents), iof:n(b.iofCents), net:n(b.networkFeeCents), netLabel:b.networkLabel, total:n(b.totalCents), bank:bank, save:bank-n(b.totalCents)});
-    });
-  }
-  function fromMarket(i){
+  function fromMarket(){
     if(!CFG.fx) return Promise.reject(new Error('sem fx'));
     return withTimeout(fetch(CFG.fx),3000).then(function(r){ return r.json(); }).then(function(j){
-      var q=j.USDBRL||{}; var ask=parseFloat(q.ask); if(!(ask>0)) throw new Error('fx inválido');
-      SRC={kind:'market', at:new Date(), rate:Math.round(ask*1e8)};
-      render(localQuote(i.usd,i.dest,SRC.rate));
+      var ask=parseFloat((j.USDBRL||{}).ask); if(!(ask>0)) throw new Error('fx inválido');
+      MKT={rate:Math.round(ask*1e8), at:new Date()};
     });
   }
-  var seq=0;
   function fetchPtax(){
     var bases=[].concat(CFG.api||[]); if(!bases.length||!CFG.ptaxPath) return Promise.reject(new Error('sem ptax'));
+    // domínio próprio primeiro; o nome sslip.io é o servidor do piloto
     var tryAt=function(k){ if(k>=bases.length) return Promise.reject(new Error('ptax indisponível')); return withTimeout(fetch(bases[k]+CFG.ptaxPath,{mode:'cors'}),3000).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); }).catch(function(){ return tryAt(k+1); }); };
-    return tryAt(0).then(function(j){ PTAX={rate:parseInt(j.rateE8,10), at:new Date(j.at)}; if(SRC.kind==='ref'){ SRC={kind:'ref', at:PTAX.at, rate:PTAX.rate}; } });
+    return tryAt(0).then(function(j){ PTAX={rate:parseInt(j.rateE8,10), at:new Date(j.at)}; });
   }
-  function refresh(){
-    var i=inputs(), my=++seq;
-    if(OWN){ SRC={kind:'own', at:null, rate:OWN}; render(localQuote(i.usd,i.dest,OWN)); showSrc(false); return; }
-    render(localQuote(i.usd,i.dest,SRC.rate)); showSrc(true);
-    fromApi(i).catch(function(){ return fromMarket(i); }).catch(function(){ SRC={kind:'ref', at:PTAX?PTAX.at:null, rate:PTAX?PTAX.rate:P.rate}; render(localQuote(i.usd,i.dest,SRC.rate)); })
-      .then(function(){ if(my===seq) showSrc(false); });
-  }
+  function loadRate(){ return fetchPtax().catch(function(){ return fromMarket(); }).catch(function(){}).then(calc); }
   var usdEl=$('usd'), timer=null;
   function debounced(){ clearTimeout(timer); timer=setTimeout(refresh,400); calc(); }
   usdEl.addEventListener('input',debounced);
   usdEl.addEventListener('blur',function(){ var c=parseUsd(usdEl.value); if(c<100)c=100; usdEl.value=fmtUsd(c); refresh(); });
   $('dest').addEventListener('change',refresh);
-  $('o-rate').addEventListener('change',function(){ var r=parseRate(this.value); OWN= r||null; if(!OWN && PTAX){ SRC={kind:'ref', at:PTAX.at, rate:PTAX.rate}; } refresh(); });
+  $('o-rate').addEventListener('change',function(){ OWN=parseRate(this.value)||null; refresh(); });
+  function setPlan(p){ PLAN=p; $('o-plan-t').setAttribute('aria-pressed',p==='table'?'true':'false'); $('o-plan-b').setAttribute('aria-pressed',p==='beta'?'true':'false'); calc(); }
+  $('o-plan-t').addEventListener('click',function(){ setPlan('table'); });
+  $('o-plan-b').addEventListener('click',function(){ setPlan('beta'); });
   $('o-own').addEventListener('input',function(){ calc(); });
   // tooltip do VET: abre no clique/toque (title nativo não funciona no celular), fecha fora ou com Esc
   var tipBtn=$('vet-tip-btn'), tipBox=$('vet-tip');
@@ -751,12 +740,11 @@ footer{border-top:1px solid var(--line);padding:56px 0 40px;font-size:.88rem}
   tipBtn.addEventListener('click',function(e){ e.preventDefault(); setTip(tipBox.hidden); });
   document.addEventListener('click',function(e){ if(!tipBox.hidden && !tipBox.contains(e.target) && e.target!==tipBtn) setTip(false); });
   document.addEventListener('keydown',function(e){ if(e.key==='Escape') setTip(false); });
-  fetchPtax().then(function(){ if(SRC.kind==='ref') calc(); }).catch(function(){});
   var chips=document.querySelectorAll('.chip'); for(var j=0;j<chips.length;j++){ chips[j].addEventListener('click',function(e){ e.preventDefault(); usdEl.value=fmtUsd(parseInt(this.getAttribute('data-v'),10)*100); refresh(); }); }
   if(CT.guiaContabilUrl){ var g=document.getElementById('guia-contabil'); if(g) g.innerHTML='Guia contábil e fiscal desta modalidade, com contador e jurídico: <a href="'+CT.guiaContabilUrl+'">abrir o guia</a>.'; }
-  refresh();
-  setInterval(function(){ if(document.visibilityState==='visible') refresh(); },60000);
-  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='visible') refresh(); });
+  calc(); loadRate();
+  // a PTAX muda por boletim; o servidor guarda 15 min, então buscar de novo a cada 15 min basta
+  setInterval(function(){ if(document.visibilityState==='visible') loadRate(); },15*60000);
 
   // Formulário do piloto (demonstração: valida e confirma na tela, sem backend)
   var lf=document.getElementById('leadform'), form=lf.querySelector('form'), err=document.getElementById('f-err');
